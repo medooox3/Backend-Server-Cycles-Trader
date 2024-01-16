@@ -9,7 +9,13 @@ from ..db.admin import AdminNotCreated
 router = APIRouter()
 
 
+
 # Todo: on Create, Update, Delete -> resend the whole list to the api user again
+
+
+@router.on_event("startup")
+async def create_users_db_tables():
+    service.create_users_db_tables()
 
 @router.get("/admin")
 async def get_admin():

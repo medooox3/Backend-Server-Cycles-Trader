@@ -2,6 +2,9 @@ from ..db import users_db_helpers as data
 from ..db.user import UserIn
 
 
+def create_users_db_tables():
+    data.create_db_tables()
+
 def create_user(user: UserIn):
     data.create_user(user)
 

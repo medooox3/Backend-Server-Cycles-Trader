@@ -8,6 +8,10 @@ from sqlmodel import create_engine, Session, SQLModel, select
 engine = create_engine("sqlite:///users.db", echo=True)
 
 
+def create_db_tables():
+    SQLModel.metadata.create_all(engine)
+
+
 # ------- Admin --------
 def create_admin():
     admin = get_admin()
@@ -45,6 +49,7 @@ def get_all_users() -> list[UserOut]:
         users = [UserOut(id=user.id, name=user.name) for user in result]
         return users
 
+
 def create_user(user_in: UserIn):
     # if user is in the DB -> raise the error
     try:
@@ -70,11 +75,3 @@ def delete_user(username: str):
             user = session.get(User, user_out.id)
             session.delete(user)
             session.commit()
-
-
-
-
-
-if __name__ == "__main__":
-    # delete_user('ali')
-    pass
