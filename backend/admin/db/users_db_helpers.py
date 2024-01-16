@@ -36,7 +36,7 @@ def get_admin():
 # ------- Users --------
 def get_user(username: str) -> UserOut | None:
     with Session(engine) as session:
-        result = session.exec(select(User).where(User.name == username)).first()
+        result = session.exec(select(User).where(User.name is username)).first()
         if result:
             user = UserOut(id=result.id, name=result.name)
             return user
