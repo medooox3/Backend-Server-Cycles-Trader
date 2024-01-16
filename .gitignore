@@ -1,4 +1,4 @@
 env
-.vscode
-__pycache__
-admin/web/__pycache__
+**/.vscode
+**/__pycache__
+__pycache__/
