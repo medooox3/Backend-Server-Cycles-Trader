@@ -14,3 +14,4 @@ payload = json.dumps({
 })
 
 response = requests.request("PUT", reqUrl, data=payload,  headers=headersList)
+print(response)
