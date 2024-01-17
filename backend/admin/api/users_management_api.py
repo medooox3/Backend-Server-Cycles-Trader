@@ -25,7 +25,7 @@ async def get_admin():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=(e.msg))
 
 
-@router.post("/")
+@router.put("/")
 async def create_user(user: Annotated[UserIn, Body()]):
     try:
         service.create_user(user)
