@@ -1,14 +1,17 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from typing import Optional
 
 class Settings(BaseSettings):
     # DB
     db_name: str = "database.sqlite"
     db_echo: bool = False
     # Secrets
-    secret_key: str = "9fe7a24fb495c8a665b58568de6437480fcefb432dcc7f4148af44b92269a753"
+    secret_key: Optional[str] = None
 
     model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()
+
+if __name__ == '__main__':
+    print(settings)
