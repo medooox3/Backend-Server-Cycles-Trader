@@ -13,7 +13,7 @@ def create_new_license(
     return user_repo.create_user_license(session, user_id, license)
 
 
-@router.get("/find/", response_model=License)
+@router.get("/{user_id}", response_model=License)
 def get_license_by_user_id(session: DBSession, user_id: int):
     return user_repo.get_user_license(session, user_id)
 
