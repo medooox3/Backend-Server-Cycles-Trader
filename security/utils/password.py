@@ -1,0 +1,14 @@
+import logging as _logging
+from passlib.context import CryptContext as _CryptContext
+
+
+_logging.getLogger("passlib").setLevel(_logging.ERROR)
+_password_context = _CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def verify_password(plain_password, hashed_password):
+    return _password_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password):
+    return _password_context.hash(password)
