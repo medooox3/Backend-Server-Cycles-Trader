@@ -1,6 +1,6 @@
+# import os
 from sqlmodel import SQLModel, create_engine
-import os
-from di import get_settings
+from config import Settings
 
 
 # def _get_db_name():
@@ -17,7 +17,7 @@ from di import get_settings
 # sqlite_path = _get_db_path()
 
 
-_settings = get_settings()
+_settings = Settings()
 
 sqlite_path = f"sqlite:///{_settings.db_name}"
 

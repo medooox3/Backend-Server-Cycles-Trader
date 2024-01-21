@@ -12,5 +12,5 @@ def init_db():
 
 
 async def on_startup():
-    load_dotenv()
+    # load_dotenv()
     init_db()

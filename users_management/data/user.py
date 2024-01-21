@@ -1,23 +1,23 @@
 from sqlmodel import SQLModel, Relationship, Field
 from typing import Optional, TYPE_CHECKING
-from uuid import uuid4, UUID
+from uuid import uuid4
 from datetime import datetime
+
 
 if TYPE_CHECKING:
     from .license import License
 
 
 class UserBase(SQLModel):
-    name: str = Field(index=True)
-    email: Optional[str]
-    phone: Optional[str]
-    location: Optional[str]
-    
+    name: str = Field(index=True, unique=True)
+    email: Optional[str] = Field(index=True, unique=True, default=None)
+    phone: Optional[str] = Field(index=True, unique=True, default=None)
+    location: Optional[str] = Field(default=None)
 
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: UUID = Field(default_factory=uuid4, index=True)
+    uuid: str = Field(default_factory=lambda: str(uuid4()), index=True)
     # trade_id: str # if needed
     password_hash: str
     created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
@@ -43,3 +43,13 @@ class UserUpdate(SQLModel):
     phone: Optional[str] = None
     location: Optional[str] = None
     password: Optional[str] = None
+
+
+class UserSearch(SQLModel):
+    """Used to find user using any of these attributes"""
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    uuid: Optional[str] = None
