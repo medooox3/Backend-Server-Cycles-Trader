@@ -3,11 +3,11 @@ from typing import Optional
 
 
 class AdminBase(SQLModel):
-    name: str = Field(default="Admin", unique=True, primary_key=True)
     email: str = Field(unique=True)
 
 
 class Admin(AdminBase, table=True):
+    name: str = Field(default="Admin", primary_key=True)
     password_hash: str
 
 
@@ -16,5 +16,9 @@ class AdminCreate(AdminBase):
 
 
 class AdminRead(AdminBase):
-    id: int
     name: str
+
+
+class AdminUpdate(SQLModel):
+    email: Optional[str] = None
+    password: Optional[str] = None
