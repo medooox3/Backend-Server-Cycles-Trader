@@ -53,3 +53,8 @@ class UserSearch(SQLModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     uuid: Optional[str] = None
+    license_id: Optional[int] = None
+
+
+class UserWithLicense(UserRead):
+    license: Optional["License"] = Field(default=None)

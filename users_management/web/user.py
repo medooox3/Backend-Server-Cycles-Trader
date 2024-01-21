@@ -1,13 +1,13 @@
 from fastapi import APIRouter, status
-from sqlmodel import select, delete, update
+from sqlmodel import select
 from ..data import User, UserCreate, UserRead, UserUpdate, License, UserSearch
 from ..data import user_repo
-
 # from security.utils import password_utils
 from di import DBSession
+from .user_license import router as user_license_router
 
-router = APIRouter()
-
+router = APIRouter(tags=["Users Management"])
+router.include_router(user_license_router)
 
 # * --------------- Users ------------- *
 @router.post("/", response_model=UserRead)
@@ -32,7 +32,7 @@ def delete_user(session: DBSession, filter: UserSearch):
 
 @router.get("/", response_model=list[UserRead])
 def get_users(session: DBSession):
-    return session.exec(select(User)).all()
+    return user_repo.get_all_users(session)
 
 
 @router.post("/find/", response_model=UserRead)
