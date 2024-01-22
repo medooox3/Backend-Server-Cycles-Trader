@@ -7,27 +7,27 @@ router = APIRouter(prefix="/licenses")
 
 
 @router.post("/", response_model=License)
-def create_new_license(
+async def create_new_license(
     session: DBSession, user_id: int, license: LicenseCreate
 ) -> License:
     return user_repo.create_user_license(session, user_id, license)
 
 
 @router.get("/{user_id}", response_model=License)
-def get_license_by_user_id(session: DBSession, user_id: int):
+async def get_license_by_user_id(session: DBSession, user_id: int):
     return user_repo.get_user_license(session, user_id)
 
 
 @router.get("/", response_model=list[License])
-def get_all_licenses(session: DBSession):
+async def get_all_licenses(session: DBSession):
     return user_repo.get_all_licenses(session)
 
 
 @router.patch("/", response_model=License)
-def update_license(*, session: DBSession, user_id: int, license: LicenseUpdate):
+async def update_license(*, session: DBSession, user_id: int, license: LicenseUpdate):
     return user_repo.update_license(session, user_id, license)
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def delete_license(session: DBSession, user_id: int):
+async def delete_license(session: DBSession, user_id: int):
     user_repo.delete_license(session, user_id)
