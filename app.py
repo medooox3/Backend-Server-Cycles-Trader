@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends
 from users_management import router as users_management_router
 from admin import router as admin_router
 from security.web import auth_api
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
