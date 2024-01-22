@@ -1,3 +1,7 @@
+# Remember 
+**Must regenerate another secret key in .env for production.**
+
+
 # How to use
 
 1. create a virtual environment.
