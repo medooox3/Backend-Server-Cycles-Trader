@@ -1,0 +1,2 @@
+1. create admin model to store only one admin in the db
+2. auth the admin
