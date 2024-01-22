@@ -6,6 +6,7 @@ notes.md
 <<<<<<< HEAD
 .vscode
 .history
+./.history
 # dependencies
 /node_modules
 /.pnp
