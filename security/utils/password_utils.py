@@ -1,3 +1,7 @@
+'''
+1. verify password (plain_password, hashed_password) -> bool
+2. get_password_hash(password) -> return hashed password
+'''
 import logging as _logging
 from passlib.context import CryptContext as _CryptContext
 
