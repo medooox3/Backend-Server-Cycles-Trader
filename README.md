@@ -1,3 +1,10 @@
+# Remember 
+**Must regenerate another secret key in .env for production.**
+
+```sh
+openssl rand -hex 32
+```
+
 # How to use
 
 1. create a virtual environment.
