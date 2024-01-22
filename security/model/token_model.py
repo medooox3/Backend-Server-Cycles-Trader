@@ -7,9 +7,9 @@ config = get_settings()
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = "bearer"
 
 
 class TokenData(BaseModel):
-    username: str
-    admin: bool | None = None
+    sub: str
+    admin: bool = False

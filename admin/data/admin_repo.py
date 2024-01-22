@@ -1,11 +1,27 @@
 from fastapi import HTTPException, status
-from sqlmodel import Session
-from .admin import AdminCreate, Admin, AdminUpdate
+from sqlmodel import Session, select
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from security.utils import password_utils
+from .admin import AdminCreate, Admin, AdminUpdate
 
 
 def get_admin(session: Session):
     return session.get(Admin, "Admin")
+
+
+def get_admin_using_email(session: Session, email: str):
+    try:
+        admin = session.exec(select(Admin).where(Admin.email == email)).one()
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Admin not found."
+        )
+    except MultipleResultsFound:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Fatal Error Multiple admins found, please contact support",
+        )
+    return admin
 
 
 def create_admin(session: Session, admin: AdminCreate):
@@ -24,7 +40,7 @@ def create_admin(session: Session, admin: AdminCreate):
 
 
 def update_admin(session: Session, admin: AdminUpdate):
-    db_admin = get_admin(session)
+    db_admin = session.exec(select(Admin).where(Admin.name == "Admin")).first()
     if not db_admin:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Admin not found."

@@ -11,6 +11,7 @@
 from jose import jwt, JWTError
 from pydantic import BaseModel
 from datetime import timedelta, datetime
+from fastapi import HTTPException, status
 
 from di import get_settings
 from ..model.token_model import TokenData, Token
@@ -19,5 +20,35 @@ from ..model.token_model import TokenData, Token
 config = get_settings()
 
 
-def create_access_token(token_data: TokenData, expires_delta: timedelta):
-   pass
+def create_access_token(token_data: TokenData, expires_delta: timedelta | None = None):
+    payload = token_data.model_dump()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(
+            minutes=config.access_token_expire_minutes
+        )
+    payload.update({"exp": expire})
+    encoded_jwt = jwt.encode(payload, config.secret_key, algorithm=config.algorithm)
+
+    return encoded_jwt
+
+
+def verify_token_access(token: str):
+    CredentialsException = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Couldn't verify credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, config.secret_key, algorithms=[config.algorithm])
+        sub = payload.get("sub")
+        is_admin = payload.get("is_admin")
+        if (sub is None) or (is_admin is None):
+            raise CredentialsException
+        token_data = TokenData(sub=sub, admin=is_admin)
+        return token_data
+    except JWTError as e:
+        # todo: remove later
+        print(e)
+        raise CredentialsException
