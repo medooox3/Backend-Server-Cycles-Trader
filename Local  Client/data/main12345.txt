@@ -1,0 +1,1 @@
+{"MLOT":"0.01","MTP":"22.00","MSL":"22.00","MTF":0,"MDD":"55555.00","MCandle":1,"AutoTrade":1,"B&S":0,"Selected":"XAGUSDm,EURUSDm,USDRUB,BTCUSDm","SelectedMax":"0,1,0,3"}

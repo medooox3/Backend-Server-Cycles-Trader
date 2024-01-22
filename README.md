@@ -24,7 +24,7 @@ $ source ./env/bin/activate
 
 4. run the backend
 ```sh
-(env) $ cd backend
+
 (env) $ uvicorn app:app --reload
 ``` 
 
