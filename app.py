@@ -16,9 +16,7 @@ app.include_router(
 app.include_router(
     admin_router,
     prefix="/admin",
-    dependencies=[
-        Depends(auth_api.admin_oauth2_scheme),
-    ],
+    dependencies=[],
 )
 app.include_router(auth_api.router, prefix="/token")
 
