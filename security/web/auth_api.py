@@ -35,31 +35,19 @@ async def login_for_token(
     session: DBSession,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
+    form_data.username = form_data.username.lower()
     # todo : validate if this is an admin or not
-    if session.exec(select(Admin).where(Admin.email == form_data.username.lower())).first():
+    if session.get(Admin, form_data.username):
         token = validate_admin(session, form_data.username, form_data.password)
-
-    token = validate_user(session, form_data.username, form_data.password)
+    else:
+        token = validate_user(session, form_data.username, form_data.password)
 
     return token
 
 
-# def get_auth(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
-#     """a dependency to get the admin from the DB, injecting this function
-#     into the router of the routes that need admin access only"""
-
-#     try:
-#         token_data = jwt_utils.verify_token_access(token)
-#         if token_data.admin:
-#             return admin_repo.get_admin_using_email(session, token_data.sub)
-#         else:
-#             return user_repo.get_user_by_name(session, token_data.sub)
-#     except:
-#         raise
-
-
-# def get_user(session: DBSession, user: Annotated[User, Depends(get_auth)]):
-def get_user(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]) -> UserRead:
+def get_user(
+    session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]
+) -> UserRead:
     token_data = jwt_utils.verify_token_access(token)
     if token_data.admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
@@ -74,25 +62,24 @@ def get_user(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]) 
 def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
     token_data = jwt_utils.verify_token_access(token)
     if not token_data.admin:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin not found",
+        )
     admin = admin_repo.get_admin(session)
     if not admin:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
+                            detail="Admin not found, err 1012")
     return admin
 
 
-# def get_admin(session: DBSession, admin: Annotated[Admin, Depends(get_auth)]):
-#     # ? is this check needed? considering pydantic autochecks ??
-#     if type(admin) is not Admin:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-#     return admin
-
-
-#
 def validate_user(session: Session, username: str, password: str):
     user = user_repo.get_user_by_name(session, username)
     if not user:
-        raise UnAuthorizedException
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found. couldn't find username",
+        )
     if not password_utils.verify_password(password, user.password_hash):
         raise UnAuthorizedException
 
@@ -103,12 +90,19 @@ def validate_user(session: Session, username: str, password: str):
     return token
 
 
-def validate_admin(session: Session, email: str, password: str):
-    admin = admin_repo.get_admin_using_email(session, email)
+def validate_admin(session: Session, username: str, password: str):
+    admin = session.get(Admin, username)
     if not admin:
-        raise NoResultFound()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin not found. couldn't find username",
+        )
+        # raise UnAuthorizedException
     if not password_utils.verify_password(password, admin.password_hash):
-        raise UnAuthorizedException
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin wrong password",
+        )
 
     access_token = jwt_utils.create_access_token(
         token_data=TokenData(sub=admin.name, admin=True)
@@ -117,79 +111,5 @@ def validate_admin(session: Session, email: str, password: str):
     return token
 
 
-# @router.post("/admin")
-# async def admin_login_for_token(
-#     session: DBSession,
-#     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-# ) -> Token:
-#     UnAuthorizedException = HTTPException(
-#         status_code=status.HTTP_401_UNAUTHORIZED,
-#         detail="Incorrect email or password",
-#     )
-#     try:
-#         admin = admin_repo.get_admin_using_email(session, form_data.username)
-#     except Exception:
-#         raise
-#     if not password_utils.verify_password(form_data.password, admin.password_hash):
-#         raise UnAuthorizedException
-
-#     access_token = jwt_utils.create_access_token(
-#         token_data=TokenData(sub=admin.name, admin=True)
-#     )
-#     token = Token(access_token=access_token)
-#     return token
-#     # return {"access_token": payload, "token_type": "bearer"}
-
-
-# def get_admin(session: DBSession, token: Annotated[str, Depends(admin_oauth2_scheme)]):
-#     """a dependency to get the admin from the DB, injecting this function
-#     into the router of the routes that need admin access only"""
-
-#     token_data = jwt_utils.verify_token_access(token)
-#     admin = admin_repo.get_admin_using_email(session, token_data.sub)
-#     # ? Do i need to return the admin ?
-#     return admin
-
-
-# # * --------- User Auth ---------------- *
-# @router.post("/user")
-# async def user_login_for_token(
-#     session: DBSession,
-#     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-# ) -> Token:
-#     UnAuthorizedException = HTTPException(
-#         status_code=status.HTTP_401_UNAUTHORIZED,
-#         detail="Incorrect username or password",
-#     )
-
-#     user = user_repo.get_user_by_name(session, form_data.username)
-#     if not user:
-#         raise UnAuthorizedException
-#     if not password_utils.verify_password(form_data.password, user.password_hash):
-#         raise UnAuthorizedException
-
 #     #  Todo: Later i can modify the token data to accept the session number to be able to count and
 #     # revoke a session from the backend
-#     access_token = jwt_utils.create_access_token(
-#         token_data=TokenData(sub=user.name, admin=False)
-#     )
-#     token = Token(access_token=access_token)
-#     return token
-#     # return {"access_token": payload, "token_type": "bearer"}
-
-
-# def get_user(session: DBSession, token: Annotated[str, Depends(user_oauth2_scheme)]):
-#     """a dependency to get the user from the DB, injecting this function
-#     into the router of the routes that need user authorization.
-
-#     Using this returned user from the dependency all the coming operations will use his id to perform api operations.
-#     For example all the functions to create  a cycle will require a user id in the argument
-#     list and using this id will insert the data in the database and link the user to them.
-#     """
-
-#     token_data = jwt_utils.verify_token_access(token)
-#     user = user_repo.get_user_by_name(session, token_data.sub)
-#     # ^ Using this returned user all the coming operations will use his id to perform api operations ^
-#     # For example all the functions to create a license or a cycle will require a user id in the argument
-#     # list and using this id will insert the data in the database and link the user to them.
-#     return user

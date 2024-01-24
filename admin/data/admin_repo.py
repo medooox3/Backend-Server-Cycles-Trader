@@ -6,7 +6,7 @@ from .admin import AdminCreate, Admin, AdminUpdate
 
 
 def get_admin(session: Session):
-    return session.get(Admin, "Admin")
+    return session.get(Admin, "admin")
 
 
 def get_admin_using_email(session: Session, email: str):
