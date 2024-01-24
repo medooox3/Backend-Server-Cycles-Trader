@@ -14,8 +14,11 @@ def get_session():
         yield session
 
 
-# Type alias
+# Type aliases
 DBSession = Annotated[Session, Depends(get_session)]
+
+
+
 # --------------------------------------------------
 
 

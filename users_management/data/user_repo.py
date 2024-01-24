@@ -20,7 +20,8 @@ LicenseNotFoundException = HTTPException(
 def _map_user(user: UserCreate) -> User:
     """Convert UserCreate to User"""
     return User(
-        name=user.name,
+        # Lower, so that no same user name can be created (ex: ali, Ali)
+        name=user.name.lower(),
         email=user.email,
         location=user.location,
         phone=user.phone,

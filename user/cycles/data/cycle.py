@@ -4,10 +4,10 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from users_management.data.user import User, UserRead
 
+# Todo: I Think i should remove the number () and only identify the cycle by id (not shown) 
 
 class CycleBase(SQLModel):
     # generated using the logic: (len(user_cycles) + 1)
-    number: int
     symbol: str
     tb: int
     sl: int
@@ -20,8 +20,9 @@ class CycleBase(SQLModel):
 
 class Cycle(CycleBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    # number: int
 
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id", index=True)
     user: Optional["User"] = Relationship(back_populates="cycles")
 
 
@@ -31,6 +32,8 @@ class CycleCreate(CycleBase):
 
 class CycleRead(CycleBase):
     id: int
+    # number: int
+    
 
 
 class CycleReadWithUser(CycleRead):
