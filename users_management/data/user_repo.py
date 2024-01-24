@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from security.utils import password_utils
 from .user import UserCreate, User, UserSearch, UserUpdate
 from .license import License, LicenseUpdate, LicenseCreate
-
+from user.cycles.data.cycle import Cycle
 
 UserNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -26,6 +26,13 @@ def _map_user(user: UserCreate) -> User:
         phone=user.phone,
         password_hash=password_utils.get_password_hash(user.password),
     )
+
+
+def get_user(session: Session, user_id: int) -> Optional[User]:
+    return session.get(User, user_id)
+
+def get_user_by_name(session: Session, name: str) -> Optional[User]:
+    return session.exec(select(User).where(User.name == name)).first()
 
 
 def get_all_users(session: Session) -> list[User]:
@@ -78,7 +85,17 @@ def find_user_using_filter(session: Session, filter: UserSearch) -> User:
 
 def delete_user(session: Session, filter: UserSearch):
     user = find_user_using_filter(session, filter)
+
+    # Find and delete all related objects
+    if user.license:
+        session.delete(license)
+    if user.cycles:
+        for cycle in user.cycles:
+            session.delete(cycle)
+
+    # Delete the user
     session.delete(user)
+
     session.commit()
 
 
@@ -144,7 +161,7 @@ def create_user_license(
     user = session.get(User, user_id)
     if not user:
         raise UserNotFoundException
-    
+
     if user.license:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
