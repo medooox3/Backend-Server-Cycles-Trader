@@ -89,7 +89,7 @@ def delete_user(session: Session, filter: UserSearch):
 
     # Find and delete all related objects
     if user.license:
-        session.delete(license)
+        session.delete(user.license)
     if user.cycles:
         for cycle in user.cycles:
             session.delete(cycle)
