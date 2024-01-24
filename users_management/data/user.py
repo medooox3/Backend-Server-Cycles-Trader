@@ -26,7 +26,7 @@ class User(UserBase, table=True):
 
     # ********* Relationships *********
     license: Optional["License"] = Relationship(back_populates="user")
-    cycles: Optional[list["Cycle"]] = Relationship( back_populates="user")
+    cycles: list["Cycle"] = Relationship( back_populates="user")
 
 
 class UserRead(UserBase):
