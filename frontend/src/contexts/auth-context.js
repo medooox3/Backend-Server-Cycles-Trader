@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-const BaseUrl = process.env.REACT_APP_API_URL
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -126,10 +126,15 @@ export const AuthProvider = (props) => {
       type: HANDLERS.SIGN_IN,
       payload: user
     });
+    
   };
 
   const signIn = async (email, password) => {
-    if (email !== 'demo@patrick.io' || password !== 'Password123!') {
+     const response = await axios.get(`${apiUrl}/admin`, {
+      "email": email,
+      "password": password
+    });
+    if (response.status !== 200) {
       throw new Error('Please check your email and password');
     }
 
@@ -137,13 +142,14 @@ export const AuthProvider = (props) => {
       window.sessionStorage.setItem('authenticated', 'true');
     } catch (err) {
       console.error(err);
+      console.log('error');
     }
 
     const user = {
       id: '5e86809283e28b96d2d38537',
       avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
+      name:   response.data.name,
+      email:  response.data.email
     };
 
     dispatch({
@@ -154,7 +160,7 @@ export const AuthProvider = (props) => {
 
   const signUp = async (email, name, password) => {
     try {
-      await axios.put( "http://127.0.0.1:8000/users", {
+      await axios.put( `${apiUrl}/users`, {
         "name": name,
         "password": password
       });
