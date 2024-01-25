@@ -2,12 +2,17 @@ from fastapi import APIRouter, status
 from sqlmodel import select
 from ..data import User, UserCreate, UserRead, UserUpdate, License, UserSearch
 from ..data import user_repo
+
 # from security.utils import password_utils
 from di import DBSession
 from .user_license import router as user_license_router
+from .user_cycles import router as user_cycles_router
+
 
 router = APIRouter(tags=["Users Management"])
 router.include_router(user_license_router)
+router.include_router(user_cycles_router)
+
 
 # * --------------- Users ------------- *
 @router.post("/", response_model=UserRead)
@@ -40,30 +45,4 @@ async def get_user(session: DBSession, filter: UserSearch):
     return user_repo.find_user_using_filter(session, filter)
     # Create a model similar to the update model, and have attributes that are
     # optional like: name, email, phone, location, uuid, id to find the user
-    pass
-
-
-# * ------------------ License ------------------- *
-async def create_license():
-    # select the user and link license to user
-    pass
-
-
-async def update_license():
-    # update the license
-    pass
-
-
-async def delete_license():
-    # delete the license
-    pass
-
-
-async def get_licenses():
-    # return all licenses for all users (show license id, user id, user name, expire date)
-    pass
-
-
-async def get_license():
-    #  return the licese for a user
     pass

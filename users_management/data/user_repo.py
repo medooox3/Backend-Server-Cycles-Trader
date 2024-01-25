@@ -6,14 +6,18 @@ from fastapi import HTTPException, status
 from security.utils import password_utils
 from .user import UserCreate, User, UserSearch, UserUpdate
 from .license import License, LicenseUpdate, LicenseCreate
-from user.cycles.data.cycle import Cycle
+from user.cycles.data.cycle import Cycle, CycleRead
 
 UserNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
 )
 LicenseNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
-    detail="User does not have a license already.",
+    detail="User does not have a license or license is not valid.",
+)
+LicenseNotValidException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail="License is not valid.",
 )
 
 
@@ -31,6 +35,7 @@ def _map_user(user: UserCreate) -> User:
 
 def get_user(session: Session, user_id: int) -> Optional[User]:
     return session.get(User, user_id)
+
 
 def get_user_by_name(session: Session, name: str) -> Optional[User]:
     return session.exec(select(User).where(User.name == name)).first()
@@ -131,7 +136,20 @@ def change_password(session: Session, user_id: int, new_password: str):
     return db_user
 
 
-# ----- License -----------
+def change_profile_name(session: Session, user_id: int, new_name: str):
+    db_user = session.get(User, user_id)
+
+    if not db_user:
+        raise UserNotFoundException
+
+    db_user.profile_name = new_name
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
+
+
+# * ------------ License ---------------
 
 
 def get_all_licenses(session: Session):
@@ -146,6 +164,18 @@ def get_user_license(session: Session, user_id: int) -> License:
     if not license:
         raise LicenseNotFoundException
     return license
+
+
+def validate_license(license: License) -> bool:
+    from datetime import datetime
+
+    is_expired = (
+        license.expire_date < datetime.utcnow()
+        or license.start_date >= license.expire_date
+    )
+    if is_expired:
+        license.valid = False
+    return license.valid
 
 
 def find_user_of_license(session: Session, license_id: int) -> User:
@@ -201,3 +231,9 @@ def update_license(session: Session, user_id: int, license: LicenseUpdate):
     session.commit()
     session.refresh(db_license)
     return db_license
+
+
+# ******************** Cycles ********************
+def get_user_cycles(session: Session, user_id: int) -> list[CycleRead]:
+    cycles = session.exec(select(Cycle).where(Cycle.user_id == user_id)).all()
+    return [CycleRead.model_validate(cycle) for cycle in cycles]
