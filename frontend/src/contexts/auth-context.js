@@ -141,7 +141,7 @@ export const AuthProvider = (props) => {
   };
   const signInAdmin = async (email, password) => {
     try {
-      const response = await axios.post(`${apiUrl}/token/admin`, querystring.stringify({
+      const response = await axios.post(`${apiUrl}/token`, querystring.stringify({
         username: email,
         password: password
       }), {
@@ -166,6 +166,15 @@ export const AuthProvider = (props) => {
       // Handle request errors
       console.error(error);
     }
+    const token = localStorage.getItem('token');
+    console.log(token); // log the token to the console
+    
+    const admin = await axios.get(`${apiUrl}/admin`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log(admin);
    const user = {
      id: '5e86809283e28b96d2d38537',
      avatar: '/assets/avatars/avatar-anika-visser.png',
@@ -175,7 +184,7 @@ export const AuthProvider = (props) => {
 
    dispatch({
      type: HANDLERS.SIGN_IN_ADMIN,
-     payload: user
+     payload: admin
    });
  };
 
@@ -208,6 +217,29 @@ export const AuthProvider = (props) => {
     });
   };
 
+  const signUpAdmin = async (email, name, password) => {
+    try {
+      await axios.post( `${apiUrl}/admin`, {
+        "email": email,
+        "password": password
+      });
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    }
+  };
   const signUp = async (email, name, password) => {
     try {
       await axios.put( `${apiUrl}/users`, {
@@ -246,7 +278,8 @@ export const AuthProvider = (props) => {
         signIn,
         signUp,
         signOut,
-        signInAdmin
+        signInAdmin,
+        signUpAdmin
       }}
     >
       {children}

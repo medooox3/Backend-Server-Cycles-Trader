@@ -22,3 +22,4 @@ class AdminRead(AdminBase):
 class AdminUpdate(SQLModel):
     email: Optional[str] = None
     password: Optional[str] = None
+ 

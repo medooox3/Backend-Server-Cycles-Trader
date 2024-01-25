@@ -18,8 +18,8 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { useAuth } from '../../hooks/use-auth';
-import { Layout as AuthLayout } from '../../layouts/auth/layout';
+import { useAuth } from '../../../hooks/use-auth';
+import { Layout as AuthLayout } from '../../../layouts/auth/layout';
 
 const Page = () => {
   const router = useRouter();
@@ -32,11 +32,7 @@ const Page = () => {
       submit: null
     },
     validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
+ 
       password: Yup
         .string()
         .max(255)
