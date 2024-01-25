@@ -31,7 +31,7 @@ class LicenseUpdate(SQLModel):
     key: str = str(uuid4())
     start_date: Optional[datetime] = None
     expire_date: Optional[datetime] = None
-    valid: bool
+    valid: Optional[bool] = None
 
 
 class LicenseRead(LicenseBase):
