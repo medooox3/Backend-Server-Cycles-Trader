@@ -13,7 +13,8 @@ from ..utils import jwt_utils, password_utils
 
 
 from users_management.data import user_repo
-from users_management.data.user import User, UserRead
+from users_management.data.user import User, UserRead, UserReadWithLicense
+from users_management.data.license import License, LicenseUpdate
 
 
 router = APIRouter(tags=["Authentication"])
@@ -37,10 +38,15 @@ async def login_for_token(
 ) -> Token:
     form_data.username = form_data.username.lower()
     # todo : validate if this is an admin or not
-    if session.get(Admin, form_data.username):
-        token = validate_admin(session, form_data.username, form_data.password)
-    else:
+    # if admin_repo.get_admin_using_email(session, form_data.username):
+    # if the DB already has a user with these credentials log him in
+    if (
+        session.exec(select(User).where(User.name == form_data.username)).first()
+        is not None
+    ):
         token = validate_user(session, form_data.username, form_data.password)
+    else:
+        token = validate_admin(session, form_data.username, form_data.password)
 
     return token
 
@@ -59,6 +65,18 @@ def get_user(
     return UserRead.model_validate(user)
 
 
+def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_user)]):
+    """returns active user according to his license status"""
+    try:
+        license = user_repo.get_user_license(session, user.id)
+        if license:
+            return user
+        else: 
+            raise user_repo.LicenseNotFoundException
+    except:
+        raise
+
+
 def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
     token_data = jwt_utils.verify_token_access(token)
     if not token_data.admin:
@@ -68,8 +86,9 @@ def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)])
         )
     admin = admin_repo.get_admin(session)
     if not admin:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-                            detail="Admin not found, err 1012")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Admin not found, err 1012"
+        )
     return admin
 
 
@@ -91,7 +110,8 @@ def validate_user(session: Session, username: str, password: str):
 
 
 def validate_admin(session: Session, username: str, password: str):
-    admin = session.get(Admin, username)
+    # admin = session.get(Admin, username)
+    admin = admin_repo.get_admin_using_email(session, username)
     if not admin:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
