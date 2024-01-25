@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class CycleBase(SQLModel):
     # generated using the logic: (len(user_cycles) + 1)
     symbol: str
-    tb: int
+    tp: int
     sl: int
     tf: str
     lot: float
@@ -45,7 +45,7 @@ class CycleReadWithUser(CycleRead):
 
 class CycleUpdate(SQLModel):
     symbol: str | None = None
-    tb: int | None = None
+    tp: int | None = None
     sl: int | None = None
     tf: str | None = None
     lot: float | None = None

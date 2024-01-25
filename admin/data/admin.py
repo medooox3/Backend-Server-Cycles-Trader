@@ -4,6 +4,7 @@ from typing import Optional
 
 class AdminBase(SQLModel):
     email: str = Field(unique=True)
+    profile_name: Optional[str] = Field(default="admin")
 
 
 class Admin(AdminBase, table=True):
@@ -22,4 +23,3 @@ class AdminRead(AdminBase):
 class AdminUpdate(SQLModel):
     email: Optional[str] = None
     password: Optional[str] = None
- 

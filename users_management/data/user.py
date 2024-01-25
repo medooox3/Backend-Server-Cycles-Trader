@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 class UserBase(SQLModel):
     name: str = Field(index=True, unique=True)
+    profile_name: Optional[str] = Field(default="user")
     email: Optional[str] = Field(index=True, unique=True, default=None)
     phone: Optional[str] = Field(index=True, unique=True, default=None)
     location: Optional[str] = Field(default=None)
@@ -41,6 +42,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(SQLModel):
     name: Optional[str] = None
+    profile_name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
     location: Optional[str] = None
