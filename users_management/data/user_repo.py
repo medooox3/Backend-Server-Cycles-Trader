@@ -136,7 +136,20 @@ def change_password(session: Session, user_id: int, new_password: str):
     return db_user
 
 
-# ----- License -----------
+def change_profile_name(session: Session, user_id: int, new_name: str):
+    db_user = session.get(User, user_id)
+
+    if not db_user:
+        raise UserNotFoundException
+
+    db_user.profile_name = new_name
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
+
+
+# * ------------ License ---------------
 
 
 def get_all_licenses(session: Session):
