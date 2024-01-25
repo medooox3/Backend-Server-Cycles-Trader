@@ -21,8 +21,9 @@ async def get_license(session: DBSession, user: UserRead = Depends(auth_api.get_
 
 @router.patch("/", response_model=UserRead)
 async def change_profile_name(
+    *,
     session: DBSession,
     user: UserRead = Depends(auth_api.get_user),
-    name: str = Query(),
+    name: str,
 ):
     return user_repo.change_profile_name(session, user.id, name)

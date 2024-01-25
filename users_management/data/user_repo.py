@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from security.utils import password_utils
 from .user import UserCreate, User, UserSearch, UserUpdate
 from .license import License, LicenseUpdate, LicenseCreate
-from user.cycles.data.cycle import Cycle
+from user.cycles.data.cycle import Cycle, CycleRead
 
 UserNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -231,3 +231,9 @@ def update_license(session: Session, user_id: int, license: LicenseUpdate):
     session.commit()
     session.refresh(db_license)
     return db_license
+
+
+# ******************** Cycles ********************
+def get_user_cycles(session: Session, user_id: int) -> list[CycleRead]:
+    cycles = session.exec(select(Cycle).where(Cycle.user_id == user_id)).all()
+    return [CycleRead.model_validate(cycle) for cycle in cycles]
