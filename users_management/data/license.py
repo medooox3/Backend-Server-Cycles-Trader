@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 
 
 class LicenseBase(SQLModel):
-    start_date: Optional[datetime] = Field(default=None)
-    expire_date: Optional[datetime] = Field(default=None)
+    start_date: datetime = Field(default_factory=datetime.utcnow)
+    expire_date: datetime = Field(default_factory=datetime.utcnow)
     valid: bool = Field(default=False, nullable=False)
 
 
@@ -22,7 +22,6 @@ class License(LicenseBase, table=True):
     key: str = Field(default_factory=lambda: str(uuid4()))
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default=None)
-    # ^ if expire date is None, license is valid forever
 
     user_id: Optional[int] = Field(default=None, foreign_key="user.id", unique=True)
     user: Optional["User"] = Relationship(back_populates="license")
@@ -33,3 +32,7 @@ class LicenseUpdate(SQLModel):
     start_date: Optional[datetime] = None
     expire_date: Optional[datetime] = None
     valid: bool
+
+
+class LicenseRead(LicenseBase):
+    pass

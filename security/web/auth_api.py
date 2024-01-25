@@ -70,11 +70,14 @@ def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_us
     try:
         license = user_repo.get_user_license(session, user.id)
         if license:
-            return user
+            is_valid = user_repo.validate_license(license)
+            if is_valid:
+                return user
+            raise user_repo.LicenseNotValidException
         else: 
             raise user_repo.LicenseNotFoundException
     except:
-        raise
+        raise 
 
 
 def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
