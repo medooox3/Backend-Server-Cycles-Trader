@@ -26,9 +26,9 @@ app.include_router(
 )
 app.include_router(auth_api.router, prefix="/token")
 
-app.include_router(cycles_api.router, prefix="/cycles")
+app.include_router(cycles_api.router, prefix="/cycles", tags=["Cycles"])
 
-app.include_router(me_api.router, prefix="/me", tags=["me"])
+app.include_router(me_api.router, prefix="/me", tags=["Me"])
 
 
 app.add_middleware(
