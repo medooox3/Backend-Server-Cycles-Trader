@@ -7,6 +7,8 @@ openssl rand -hex 32
 
 # How to use
 
+using python version `3.11.5`
+
 1. create a virtual environment.
 ```sh
 $ python3 -m venv env

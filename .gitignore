@@ -36,3 +36,4 @@ yarn-error.log*
 =======
 *.sqlite
 >>>>>>> 3e3223f6fff2ad7d57f2a9d7b01241c9716a3fde
+.venv

@@ -6,6 +6,7 @@ from datetime import datetime
 
 if TYPE_CHECKING:
     from .license import License
+    from user.cycles.data.cycle import Cycle
 
 
 class UserBase(SQLModel):
@@ -25,6 +26,7 @@ class User(UserBase, table=True):
 
     # ********* Relationships *********
     license: Optional["License"] = Relationship(back_populates="user")
+    cycles: list["Cycle"] = Relationship( back_populates="user")
 
 
 class UserRead(UserBase):
@@ -56,5 +58,13 @@ class UserSearch(SQLModel):
     license_id: Optional[int] = None
 
 
-class UserWithLicense(UserRead):
+class UserReadWithLicense(UserRead):
     license: Optional["License"] = Field(default=None)
+
+
+class UserReadWithCycles(UserRead):
+    cycles: Optional[list["Cycle"]] = Field(default=None)
+
+
+class UserReadAll(UserReadWithCycles, UserReadWithLicense):
+    pass

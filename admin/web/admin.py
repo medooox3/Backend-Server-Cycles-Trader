@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Annotated
+
 
 from di import DBSession
 from ..data import admin_repo
 from ..data.admin import Admin, AdminRead, AdminCreate, AdminUpdate
-from security.web.auth_api import admin_oauth2_scheme
+from security.web import auth_api
 
 # --------------
 # from security.auth import admin_auth
@@ -17,7 +19,8 @@ async def register_admin(session: DBSession, admin: AdminCreate):
     return admin_repo.create_admin(session, admin)
 
 
-@router.get("/", response_model=AdminRead, dependencies=[Depends(admin_oauth2_scheme),])
+# ! This is a security issue, using oauth sceheme will allow any authorized user/ admin to access this
+@router.get("/", response_model=AdminRead, dependencies=[Depends(auth_api.get_admin)])
 async def get_admin(session: DBSession):
     admin = admin_repo.get_admin(session)
     if not admin:
@@ -28,6 +31,6 @@ async def get_admin(session: DBSession):
     return admin
 
 
-@router.patch("/", response_model=AdminRead, dependencies=[Depends(admin_oauth2_scheme),])
+@router.patch("/", response_model=AdminRead, dependencies=[Depends(auth_api.get_admin)])
 async def update_admin(session: DBSession, admin: AdminUpdate):
     return admin_repo.update_admin(session, admin)
