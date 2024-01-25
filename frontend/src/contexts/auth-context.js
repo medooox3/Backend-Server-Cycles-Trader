@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import querystring from 'querystring';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT'
+  SIGN_OUT: 'SIGN_OUT',
+  SIGN_IN_ADMIN: 'SIGN_IN_ADMIN'
 };
 
 const initialState = {
@@ -34,6 +36,15 @@ const handlers = {
       )
     };
   },
+  [HANDLERS.SIGN_IN_ADMIN]: (state, action) => {
+    const user = action.payload;
+      return {
+        ...state,
+        isAuthenticated: true,
+        user
+      };
+  },
+
   [HANDLERS.SIGN_IN]: (state, action) => {
     const user = action.payload;
 
@@ -128,6 +139,45 @@ export const AuthProvider = (props) => {
     });
     
   };
+  const signInAdmin = async (email, password) => {
+    try {
+      const response = await axios.post(`${apiUrl}/token/admin`, querystring.stringify({
+        username: email,
+        password: password
+      }), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+  
+      if (response.status === 200) {
+        // Login successful
+        const token = response.data.access_token;
+        // Store the token in local storage or in memory
+        localStorage.setItem('token', token);
+        window.sessionStorage.setItem('authenticated', 'true');
+        console.log('Login successful');
+        console.log(response.data);
+      } else {
+        // Handle login failure
+        console.error('Login failed');
+      }
+    } catch (error) {
+      // Handle request errors
+      console.error(error);
+    }
+   const user = {
+     id: '5e86809283e28b96d2d38537',
+     avatar: '/assets/avatars/avatar-anika-visser.png',
+     name:   response.data.name,
+     email:  response.data.email
+   };
+
+   dispatch({
+     type: HANDLERS.SIGN_IN_ADMIN,
+     payload: user
+   });
+ };
 
   const signIn = async (email, password) => {
      const response = await axios.get(`${apiUrl}/admin`, {
@@ -195,7 +245,8 @@ export const AuthProvider = (props) => {
         skip,
         signIn,
         signUp,
-        signOut
+        signOut,
+        signInAdmin
       }}
     >
       {children}
