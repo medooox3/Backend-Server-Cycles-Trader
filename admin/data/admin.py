@@ -7,7 +7,7 @@ class AdminBase(SQLModel):
 
 
 class Admin(AdminBase, table=True):
-    name: str = Field(default="Admin", primary_key=True)
+    name: str = Field(default="admin", primary_key=True)
     password_hash: str
 
 
