@@ -43,14 +43,16 @@ def verify_token_access(token: str):
     try:
         payload = jwt.decode(token, config.secret_key, algorithms=[config.algorithm])
         sub = payload.get("sub")
+        access_session = payload.get("session")
         is_admin = payload.get("admin")
-        if (sub is None) or (is_admin is None):
+        # if (sub is None) or (is_admin is None) or (access_session is None):
+        if not (sub and access_session is not None and is_admin is not None):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Couldn't verify credentials, sub={sub}, is_admin={is_admin}",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        token_data = TokenData(sub=sub, admin=is_admin)
+        token_data = TokenData(sub=sub, session=access_session, admin=is_admin)
         return token_data
     except JWTError as e:
         raise HTTPException(

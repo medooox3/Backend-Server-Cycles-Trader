@@ -11,5 +11,9 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
+    # user name or admin email
     sub: str
+    # session uuid
+    session: str
+    # whether this user is admin or normal user
     admin: bool = False

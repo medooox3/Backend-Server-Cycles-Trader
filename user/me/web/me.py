@@ -27,3 +27,11 @@ async def change_profile_name(
     name: str,
 ):
     return user_repo.change_profile_name(session, user.id, name)
+
+
+
+@router.get("/ping")
+async def ping():
+    '''call this api every 5 minutes to update the last seen status '''
+    # Todo: udpate the last seen
+    pass

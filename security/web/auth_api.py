@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import Depends, APIRouter, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import select, Session
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
@@ -9,7 +9,7 @@ from di import DBSession
 from ..model.token_model import Token, TokenData
 from admin.data.admin import Admin
 from admin.data import admin_repo
-from ..utils import jwt_utils, password_utils
+from ..utils import jwt_utils, password_utils, access_session_utils
 
 
 from users_management.data import user_repo
@@ -35,6 +35,7 @@ UnAuthorizedException = HTTPException(
 async def login_for_token(
     session: DBSession,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    request: Request,
 ) -> Token:
     form_data.username = form_data.username.lower()
     # todo : validate if this is an admin or not
@@ -44,7 +45,7 @@ async def login_for_token(
         session.exec(select(User).where(User.name == form_data.username)).first()
         is not None
     ):
-        token = validate_user(session, form_data.username, form_data.password)
+        token = validate_user(session, form_data.username, form_data.password, request)
     else:
         token = validate_admin(session, form_data.username, form_data.password)
 
@@ -52,7 +53,9 @@ async def login_for_token(
 
 
 def get_user(
-    session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]
+    session: DBSession,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    request: Request,
 ) -> UserRead:
     token_data = jwt_utils.verify_token_access(token)
     if token_data.admin:
@@ -62,6 +65,14 @@ def get_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
+    # Todo: validate the user session
+    if not token_data.session:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session not found. Please Login.",
+        )
+    access_session_utils.validate_access_session(session, token_data.session, request)  # type: ignore
+
     return UserRead.model_validate(user)
 
 
@@ -74,10 +85,10 @@ def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_us
             if is_valid:
                 return user
             raise user_repo.LicenseNotValidException
-        else: 
+        else:
             raise user_repo.LicenseNotFoundException
     except:
-        raise 
+        raise
 
 
 def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
@@ -95,7 +106,7 @@ def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)])
     return admin
 
 
-def validate_user(session: Session, username: str, password: str):
+def validate_user(session: Session, username: str, password: str, request: Request):
     user = user_repo.get_user_by_name(session, username)
     if not user:
         raise HTTPException(
@@ -105,8 +116,16 @@ def validate_user(session: Session, username: str, password: str):
     if not password_utils.verify_password(password, user.password_hash):
         raise UnAuthorizedException
 
+    # todo: use request to provide user agent
+    user_agent = request.headers.get("User-Agent")
+    access_session = access_session_utils.create_access_session(session, user.id, user_agent)  # type: ignore
+
     access_token = jwt_utils.create_access_token(
-        token_data=TokenData(sub=user.name, admin=False)
+        token_data=TokenData(
+            sub=user.name,
+            session=access_session.uuid,
+            admin=False,
+        )
     )
     token = Token(access_token=access_token)
     return token
@@ -128,7 +147,7 @@ def validate_admin(session: Session, username: str, password: str):
         )
 
     access_token = jwt_utils.create_access_token(
-        token_data=TokenData(sub=admin.name, admin=True)
+        token_data=TokenData(sub=admin.name, session="", admin=True)
     )
     token = Token(access_token=access_token)
     return token

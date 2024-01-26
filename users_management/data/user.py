@@ -7,7 +7,7 @@ from datetime import datetime
 if TYPE_CHECKING:
     from .license import License
     from user.cycles.data.cycle import Cycle
-
+    from security.model.access_session import AccessSession
 
 class UserBase(SQLModel):
     name: str = Field(index=True, unique=True)
@@ -28,6 +28,7 @@ class User(UserBase, table=True):
     # ********* Relationships *********
     license: Optional["License"] = Relationship(back_populates="user")
     cycles: list["Cycle"] = Relationship( back_populates="user")
+    access_sessions: list["AccessSession"] = Relationship( back_populates="user")
 
 
 class UserRead(UserBase):
