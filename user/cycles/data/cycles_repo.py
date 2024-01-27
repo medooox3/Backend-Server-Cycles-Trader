@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 from fastapi import HTTPException, status
 
 from .cycle import Cycle, CycleCreate, CycleUpdate, CycleRead
+from .order import Order
 from users_management.data.user import User
 
 
@@ -20,6 +21,11 @@ def create_cycle(session: Session, user_id: int, cycle: CycleCreate) -> Cycle:
     return db_cycle
 
 
+def create_order(session: Session, order: Order):
+    # todo: send this order to the Local client
+    # and when the local client receives it, he will create a new cycle
+    # and sends this cycle to the backend to store.
+    pass
 def delete_cycle(session: Session, user_id: int, uuid: str):
     # todo: verify that this cycle belongs to this user before deleting or updating
 

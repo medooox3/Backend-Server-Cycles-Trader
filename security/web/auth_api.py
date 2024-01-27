@@ -7,6 +7,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 from di import DBSession
 from ..model.token_model import Token, TokenData
+from ..model.access_session import AccessSessionRead
 from admin.data.admin import Admin
 from admin.data import admin_repo
 from ..utils import jwt_utils, password_utils, access_session_utils
@@ -71,9 +72,11 @@ def get_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Session not found. Please Login.",
         )
-    access_session_utils.validate_access_session(session, token_data.session, request)  # type: ignore
+    access_session = access_session_utils.validate_access_session(
+        session, token_data.session, request
+    )  # type: ignore
 
-    return UserRead.model_validate(user)
+    return UserRead.model_validate(user) #, access_session
 
 
 def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_user)]):
@@ -89,6 +92,15 @@ def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_us
             raise user_repo.LicenseNotFoundException
     except:
         raise
+
+
+# def get_active_user_and_session(
+#     session: DBSession, user: Annotated[UserRead, Depends(get_active_user)]
+# ):
+#     access_session = access_session_utils.get_access_sessions_of_user(session, user.id)[
+#         0
+#     ]
+#     return (user, access_session)
 
 
 def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)]):
@@ -118,7 +130,15 @@ def validate_user(session: Session, username: str, password: str, request: Reque
 
     # todo: use request to provide user agent
     user_agent = request.headers.get("User-Agent")
-    access_session = access_session_utils.create_access_session(session, user.id, user_agent)  # type: ignore
+    if not user_agent or not user.id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Agent not found. Please Login.",
+        )
+
+    access_session = access_session_utils.create_access_session(
+        session, user.id, user_agent
+    )  # type: ignore
 
     access_token = jwt_utils.create_access_token(
         token_data=TokenData(

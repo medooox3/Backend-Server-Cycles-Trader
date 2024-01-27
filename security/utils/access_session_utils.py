@@ -12,7 +12,7 @@ NotValidAccessSession = HTTPException(
 
 
 def validate_access_session(
-    db: Session, access_session_uuid: int, request: Request
+    db: Session, access_session_uuid: str, request: Request
 ) -> AccessSession:
     access_session = db.exec(
         select(AccessSession).where(AccessSession.uuid == access_session_uuid)
@@ -34,7 +34,9 @@ def validate_access_session(
     return access_session
 
 
-def create_access_session(db: Session, user_id: int, user_agent: str) -> AccessSessionRead:
+def create_access_session(
+    db: Session, user_id: int, user_agent: str
+) -> AccessSessionRead:
     access_session = AccessSession(user_id=user_id, user_agent=user_agent)
     db.add(access_session)
     db.commit()
@@ -91,6 +93,19 @@ def get_access_sessions_of_user(db: Session, user_id: int) -> list[AccessSession
         select(AccessSession).where(AccessSession.user_id == user_id)
     ).all()
     return map_to_access_session_read(db, list(db_access_sessions))
+
+
+def update_access_session_last_seen(db: Session, session_uuid: str):
+    access_session = db.exec(
+        select(AccessSession).where(AccessSession.uuid == session_uuid)
+    ).first()
+    if not access_session:
+        raise NotValidAccessSession
+    access_session.last_seen = datetime.utcnow()
+    db.add(access_session)
+    db.commit()
+    db.refresh(access_session)
+    return access_session
 
 
 def map_to_access_session_read(

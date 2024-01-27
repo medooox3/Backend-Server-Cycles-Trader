@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from users_management.data import user_repo, UserRead, UserUpdate, LicenseRead
 from security.web import auth_api
-
+from security.utils import access_session_utils
 from di import DBSession
 
 
@@ -31,7 +31,8 @@ async def change_profile_name(
 
 
 @router.get("/ping")
-async def ping():
+async def ping(session: DBSession, user: UserRead = Depends(auth_api.get_user)):
     '''call this api every 5 minutes to update the last seen status '''
     # Todo: udpate the last seen
+    # access_session_utils.update_access_session_last_seen(session, access_session_uuid)
     pass
