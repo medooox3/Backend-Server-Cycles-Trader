@@ -5,10 +5,9 @@ from config import Settings
 
 _settings = Settings()
 
-sqlite_path = f"sqlite:///{_settings.db_name}"
 
 engine = create_engine(
-    sqlite_path,
+    _settings.db_path,
     echo=_settings.db_echo,
     connect_args={
         "check_same_thread": False,

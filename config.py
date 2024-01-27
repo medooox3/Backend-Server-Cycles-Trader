@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     refresh_token_expire_minutes: int = 60 * 24 * 15  # 15 days
     local_token_expire_minutes: int = 60 * 24 * 30 * 12 + 5  # 365 days
     # DB
-    db_name: str = "database.sqlite"
+    db_path: str = "sqlite:///db.sqlite"
     db_echo: bool = False
 
     model_config = SettingsConfigDict(env_file=".env")

@@ -1,22 +1,22 @@
 from fastapi import APIRouter, status
-from di import DBSession, AccountUuid
+from di import DBSession
 from users_management.data import user_repo
 from users_management.data.license import License, LicenseUpdate, LicenseCreate
 
 router = APIRouter(prefix="/licenses")
 
 
-@router.post("/", response_model=License)
-async def create_new_license(
-    session: DBSession, account_uuid: AccountUuid, user_id: int, license: LicenseCreate
-) -> License:
-    return user_repo.create_account_license(session, account_id, license)
-    return user_repo.create_user_license(session, user_id, license)
+# @router.post("/", response_model=License)
+# async def create_new_license(
+#     session: DBSession, account_uuid: AccountUuid, user_id: int, license: LicenseCreate
+# ) -> License:
+#     return user_repo.create_account_license(session, account_id, license)
+#     return user_repo.create_user_license(session, user_id, license)
 
 
-@router.get("/{user_id}", response_model=License)
-async def get_license_by_user_id(session: DBSession, user_id: int):
-    return user_repo.get_user_license(session, user_id)
+# @router.get("/{user_id}", response_model=License)
+# async def get_license_by_user_id(session: DBSession, user_id: int):
+#     return user_repo.get_user_license(session, user_id)
 
 
 @router.get("/", response_model=list[License])
