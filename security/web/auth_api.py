@@ -76,17 +76,38 @@ def get_user(
         session, token_data.session, request
     )  # type: ignore
 
-    return UserRead.model_validate(user) #, access_session
+    return UserRead.model_validate(user)  # , access_session
 
 
-def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_user)]):
+# def get_active_user(session: DBSession, user: Annotated[UserRead, Depends(get_user)]):
+#     """returns active user according to his license status"""
+#     try:
+#         license = user_repo.get_user_license(session, user.id)
+#         if license:
+#             is_valid = user_repo.validate_license(license)
+#             if is_valid:
+#                 return user
+#             raise user_repo.LicenseNotValidException
+#         else:
+#             raise user_repo.LicenseNotFoundException
+#     except:
+#         raise
+
+
+def get_active_user(
+    session: DBSession, request: Request, user: Annotated[UserRead, Depends(get_user)]
+):
     """returns active user according to his license status"""
     try:
-        license = user_repo.get_user_license(session, user.id)
+        account_uuid = request.cookies.get("account")
+        if not account_uuid:
+            raise user_repo.LicenseNotFoundException
+        account = user_repo.get_account_from_uuid(session, account_uuid)
+        license = user_repo.get_account_license(session, account.id)  # type: ignore
         if license:
             is_valid = user_repo.validate_license(license)
             if is_valid:
-                return user
+                return license
             raise user_repo.LicenseNotValidException
         else:
             raise user_repo.LicenseNotFoundException

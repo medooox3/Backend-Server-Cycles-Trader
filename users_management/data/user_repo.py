@@ -96,6 +96,7 @@ def find_user_using_filter(session: Session, filter: UserSearch) -> User:
 
 
 def delete_user(session: Session, filter: UserSearch):
+    # todo: refactor to work with account 
     user = find_user_using_filter(session, filter)
 
     # Find and delete all related objects
@@ -163,6 +164,12 @@ def create_account(session: Session, user_id: int, account: AccountCreate) -> Ac
     session.refresh(a)
     return a
 
+
+def get_account_from_uuid(session: Session, uuid: str) -> Account:
+    account = session.exec(select(Account).where(Account.uuid == uuid)).first()
+    if not account:
+        raise AccountNotFoundException
+    return account
 
 def get_all_accounts(session: Session, user_id: Optional[int]) -> list[Account]:
     """returns all accounts stored in the DB, or all accounts of a specific user"""
