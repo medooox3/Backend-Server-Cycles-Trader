@@ -6,11 +6,17 @@ from fastapi import HTTPException, status
 from security.utils import password_utils
 from .user import UserCreate, User, UserSearch, UserUpdate
 from .license import License, LicenseUpdate, LicenseCreate
+from .account import Account, AccountCreate
 from user.cycles.data.cycle import Cycle, CycleRead
 
 UserNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
 )
+
+AccountNotFoundException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="Account not found"
+)
+
 LicenseNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail="User does not have a license or license is not valid.",
@@ -149,21 +155,66 @@ def change_profile_name(session: Session, user_id: int, new_name: str):
     return db_user
 
 
-# * ------------ License ---------------
+# ******************** Account ********************
+def create_account(session: Session, user_id: int, account: AccountCreate) -> Account:
+    a = Account.model_validate(account)
+    session.add(a)
+    session.commit()
+    session.refresh(a)
+    return a
 
 
+def get_all_accounts(session: Session, user_id: Optional[int]) -> list[Account]:
+    """returns all accounts stored in the DB, or all accounts of a specific user"""
+    stmt = select(Account)
+    if user_id:
+        stmt = select(Account).where(Account.user_id == user_id)
+
+    return list(session.exec(stmt).all())
+
+
+def delete_accounts(
+    session: Session, user_id: Optional[int], accounts_ids: Optional[list[int]]
+):
+    if accounts_ids:
+        for account_id in accounts_ids:
+            session.delete(session.get(Account, account_id))
+    if user_id:
+        for account in get_all_accounts(session, user_id):
+            session.delete(account)
+    session.commit()
+
+
+def update_account():
+    pass
+
+
+# ? ******************** End Account ********************
+
+
+# ******************** License ********************
 def get_all_licenses(session: Session):
     return session.exec(select(License)).all()
 
 
-def get_user_license(session: Session, user_id: int) -> License:
-    user = session.get(User, user_id)
-    if not user:
-        raise UserNotFoundException
-    license = user.license
+def get_account_license(session: Session, account_id: int) -> License:
+    account = session.get(Account, account_id)
+    if not account:
+        raise AccountNotFoundException
+    license = account.license
     if not license:
         raise LicenseNotFoundException
     return license
+
+
+def get_user_licenses(session: Session, user_id: int) -> list[License]:
+    user = session.get(User, user_id)
+    if not user:
+        raise UserNotFoundException
+    licenses = user.licenses
+    if licenses is None:
+        raise LicenseNotFoundException
+    return licenses
 
 
 def validate_license(license: License) -> bool:
@@ -179,48 +230,58 @@ def validate_license(license: License) -> bool:
 
 
 def find_user_of_license(session: Session, license_id: int) -> User:
-    user = session.exec(select(User).where(User.license_id == license_id)).first()
+    db_license = session.get(License, license_id)
+    if not db_license:
+        raise LicenseNotFoundException
+    user = db_license.user
     if not user:
         raise UserNotFoundException
     return user
 
 
-def create_user_license(
-    session: Session, user_id: int, license: LicenseCreate
+def create_account_license(
+    session: Session, account_id: int, license: LicenseCreate
 ) -> License:
-    # find user
-    user = session.get(User, user_id)
-    if not user:
-        raise UserNotFoundException
+    # find account
+    account = session.get(Account, account_id)
+    if not account:
+        raise AccountNotFoundException
 
-    if user.license:
+    if account.license:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User already has a license, consider removing old one and creating a new one or updating the old license.",
+            detail="Account already has a license, consider removing the old license and creating a new one or updating the old license.",
         )
     # add license to the db
-    db_license = License.model_validate(license)
+    db_license = License(
+        **license.model_dump(exclude_unset=True),
+        account_id=account.id,
+        user_id=account.user_id,
+    )
     session.add(db_license)
     session.commit()
     session.refresh(db_license)
 
-    # link license to user
-    user.license = db_license
+    # link the license to the user
+    db_license.user = account.user
+    # link license to account
+    account.license = db_license
+
     session.commit()
     session.refresh(db_license)
     return db_license
 
 
-def delete_license(session: Session, user_id: int):
-    license = get_user_license(session, user_id)
+def delete_license(session: Session, account_id: int):
+    license = get_account_license(session, account_id)
     session.delete(license)
     session.commit()
 
 
-def update_license(session: Session, user_id: int, license: LicenseUpdate):
+def update_license(session: Session, account_id: int, license: LicenseUpdate):
     from datetime import datetime
 
-    db_license = get_user_license(session, user_id)
+    db_license = get_account_license(session, account_id)
 
     # update license attributes
     for field, value in license.model_dump(exclude_unset=True).items():
@@ -233,7 +294,13 @@ def update_license(session: Session, user_id: int, license: LicenseUpdate):
     return db_license
 
 
+# ? ******************** End License ********************
+
+
 # ******************** Cycles ********************
 def get_user_cycles(session: Session, user_id: int) -> list[CycleRead]:
     cycles = session.exec(select(Cycle).where(Cycle.user_id == user_id)).all()
     return [CycleRead.model_validate(cycle) for cycle in cycles]
+
+
+# ? ******************** End Cycles ********************

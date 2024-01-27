@@ -12,6 +12,7 @@ def init_db():
     from user.cycles.data.cycle import Cycle
     from security.model.access_session import AccessSession
 
+
     create_tables()
 
 

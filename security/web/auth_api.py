@@ -14,7 +14,7 @@ from ..utils import jwt_utils, password_utils, access_session_utils
 
 
 from users_management.data import user_repo
-from users_management.data.user import User, UserRead, UserReadWithLicense
+from users_management.data.user import User, UserRead
 from users_management.data.license import License, LicenseUpdate
 
 

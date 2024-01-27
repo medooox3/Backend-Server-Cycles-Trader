@@ -3,7 +3,7 @@ from typing import Optional, TYPE_CHECKING
 from uuid import uuid4
 if TYPE_CHECKING:
     from users_management.data.user import User, UserRead
-
+    from users_management.data.account import Account
 # Todo: I Think i should remove the number () and only identify the cycle by id (not shown) 
 
 class CycleBase(SQLModel):
@@ -23,9 +23,8 @@ class Cycle(CycleBase, table=True):
     uuid: str = Field(default_factory=lambda: str(uuid4()), index=True)
     # number: int
     
-
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id", index=True)
-    user: Optional["User"] = Relationship(back_populates="cycles")
+    account_id: Optional[int] = Field(default=None, foreign_key="account.id")
+    account: Optional["Account"] = Relationship(back_populates="cycles")
 
 
 class CycleCreate(CycleBase):
