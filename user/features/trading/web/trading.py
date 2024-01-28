@@ -4,7 +4,7 @@ from typing import Annotated
 
 from dependencies import DBSession
 from security.web.auth_api import get_user, get_active_user
-from shared.models import User, UserRead
+from users_management.data.user import User, UserRead
 from ..data import cycles_repo
 from ..data.cycle import Cycle, CycleRead, CycleCreate, CycleUpdate, CycleReadWithUser
 

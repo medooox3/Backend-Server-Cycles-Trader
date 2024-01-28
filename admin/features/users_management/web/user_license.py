@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status
 from dependencies import DBSession
-from users_management.data import user_repo
-from users_management.data.license import License, LicenseUpdate, LicenseCreate
+from ..service import users_service, license_service
+from ..data.license import License, LicenseUpdate, LicenseCreate
 
-router = APIRouter(prefix="/licenses")
+router = APIRouter()
 
 
 # @router.post("/", response_model=License)
@@ -21,14 +21,14 @@ router = APIRouter(prefix="/licenses")
 
 @router.get("/", response_model=list[License])
 async def get_all_licenses(session: DBSession):
-    return user_repo.get_all_licenses(session)
+    return license_service.get_all_licenses(session)
 
 
 @router.patch("/", response_model=License)
 async def update_license(*, session: DBSession, user_id: int, license: LicenseUpdate):
-    return user_repo.update_license(session, user_id, license)
+    return license_service.update_license(session, user_id, license)
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_license(session: DBSession, user_id: int):
-    user_repo.delete_license(session, user_id)
+    license_service.delete_license(session, user_id)

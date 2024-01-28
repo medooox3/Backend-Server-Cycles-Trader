@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 
 from .cycle import Cycle, CycleCreate, CycleUpdate, CycleRead
 from .order import Order
-from shared.models import User
+from users_management.data.user import User
 
 
 def create_cycle(session: Session, user_id: int, cycle: CycleCreate) -> Cycle:
