@@ -10,7 +10,7 @@ from security.web import auth_api
 # from security.auth import admin_auth
 # --------------
 
-router = APIRouter(tags=["Admin"])
+router = APIRouter()
 
 
 @router.post("/", response_model=AdminRead)

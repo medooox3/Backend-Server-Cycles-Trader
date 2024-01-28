@@ -9,7 +9,7 @@ from .user_license import router as license_router
 from .user_accounts import router as accounts_router
 
 
-router = APIRouter(tags=["Users Management"])
+router = APIRouter()
 router.include_router(license_router, prefix="/licenses")
 # router.include_router(cycles_router, prefix="/cycles")
 router.include_router(accounts_router, prefix="/accounts")

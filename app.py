@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from admin.features.users_management.web import users_management_router
 from admin import admin_router
-from security.web import auth_api
+from security.service import auth_service
 from user.cycles.web import cycles as cycles_api
-from user.me.web import me as me_api
+from user.features.profile.web import profile as user_profile
 
 
 app = FastAPI()
@@ -13,20 +13,26 @@ app = FastAPI()
 app.include_router(
     users_management_router,
     prefix="/users",
+    tags=["Admin Users Management"],
     dependencies=[
-        Depends(auth_api.get_admin),
+        Depends(auth_service.get_admin),
     ],
 )
 app.include_router(
     admin_router,
     prefix="/admin",
+    tags=["Admin Profile Management"],
     dependencies=[],
 )
-app.include_router(auth_api.router, prefix="/token")
+app.include_router(auth_service.router, prefix="/token")
 
-app.include_router(cycles_api.router, prefix="/cycles")
+app.include_router(
+    cycles_api.router,
+    prefix="/cycles",
+    tags=["User Trading Management"],
+)
 
-app.include_router(me_api.router, prefix="/me", tags=["me"])
+app.include_router(user_profile.router, prefix="/me", tags=["User Profile"])
 
 
 app.add_middleware(
