@@ -2,8 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
 from uuid import uuid4
 if TYPE_CHECKING:
-    from users_management.data.user import User, UserRead
-    from users_management.data.account import Account
+    from shared.models import User, UserRead, Account
 # Todo: I Think i should remove the number () and only identify the cycle by id (not shown) 
 
 class CycleBase(SQLModel):

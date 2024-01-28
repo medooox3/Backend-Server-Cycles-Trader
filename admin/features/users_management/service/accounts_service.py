@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 
 from ..data import (
     Account,
+    AccountRead,
     AccountCreate,
 )
 from ..data.exceptions import (
@@ -18,11 +19,11 @@ def create_account(session: Session, user_id: int, account: AccountCreate) -> Ac
     return a
 
 
-def get_account_from_uuid(session: Session, uuid: str) -> Account:
+def get_account_from_uuid(session: Session, uuid: str) -> AccountRead:
     account = session.exec(select(Account).where(Account.uuid == uuid)).first()
     if not account:
         raise AccountNotFoundException
-    return account
+    return AccountRead.model_validate(account)
 
 
 def get_all_accounts(session: Session, user_id: Optional[int]) -> list[Account]:
@@ -48,5 +49,3 @@ def delete_accounts(
 
 def update_account():
     pass
-
-

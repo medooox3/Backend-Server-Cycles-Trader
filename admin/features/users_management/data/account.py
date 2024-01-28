@@ -3,9 +3,9 @@ import shortuuid
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .user import User, UserRead
-    from .license import License, LicenseRead
-    from user.cycles.data.cycle import Cycle
+    from .user import User, UserRead, License
+    from .license import LicenseRead
+    from user.cycles.data.cycle import Cycle, CycleRead
 
 
 class AccountBase(SQLModel):
@@ -24,9 +24,12 @@ class Account(SQLModel, table=True):
     cycles: Optional[list["Cycle"]] = Relationship(back_populates="account")
 
 
-# class AccountRead(AccountBase):
-#     user: UserRead
-#     license: Optional["LicenseRead"]
+class AccountRead(AccountBase):
+    id: int
+    user_id: int
+    user: "UserRead"
+    license: "LicenseRead"
+    cycles: list["CycleRead"]
 
 
 class AccountCreate(AccountBase):
