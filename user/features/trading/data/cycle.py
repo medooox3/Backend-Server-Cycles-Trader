@@ -1,14 +1,10 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, TYPE_CHECKING
-from uuid import uuid4
 import shortuuid
 if TYPE_CHECKING:
-    from users_management.data.user import User, UserRead
-    from users_management.data.account import Account
-# Todo: I Think i should remove the number () and only identify the cycle by id (not shown) 
+    from shared.models import User, UserRead, Account
 
 class CycleBase(SQLModel):
-    # generated using the logic: (len(user_cycles) + 1)
     symbol: str
     tp: int
     sl: int
@@ -21,8 +17,7 @@ class CycleBase(SQLModel):
 
 class Cycle(CycleBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    uuid: str = Field(default_factory=lambda: str(uuid4()), index=True)
-    # number: int
+    uuid: str = Field(default_factory=lambda: shortuuid.uuid(), index=True)
     
     account_id: Optional[int] = Field(default=None, foreign_key="account.id")
     account: Optional["Account"] = Relationship(back_populates="cycles")
@@ -35,7 +30,6 @@ class CycleCreate(CycleBase):
 class CycleRead(CycleBase):
     id: int
     uuid: str
-    # number: int
     
 
 

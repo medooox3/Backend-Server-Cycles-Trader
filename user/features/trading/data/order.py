@@ -6,7 +6,7 @@ from enum import Enum
 from .candle import Candle
 
 if TYPE_CHECKING:
-    from users_management.data.user import User, UserRead
+    from shared.models import User, UserRead
 
 
 class OrderCommand(Enum):

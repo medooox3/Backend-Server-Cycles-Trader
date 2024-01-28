@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from admin.features.users_management.web import users_management_router
 from admin import admin_router
 from security.service import auth_service
-from user.cycles.web import cycles as cycles_api
+from user.features.trading.web import trading as user_trading_api
 from user.features.profile.web import profile as user_profile
 
 
@@ -27,7 +27,7 @@ app.include_router(
 app.include_router(auth_service.router, prefix="/token")
 
 app.include_router(
-    cycles_api.router,
+    user_trading_api.router,
     prefix="/cycles",
     tags=["User Trading Management"],
 )
