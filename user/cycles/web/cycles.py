@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Annotated
 
 
-from di import DBSession
+from dependencies import DBSession
 from security.web.auth_api import get_user, get_active_user
 from users_management.data.user import User, UserRead
 from ..data import cycles_repo

@@ -5,11 +5,11 @@ from sqlmodel import select, Session
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 
-from di import DBSession
+from dependencies import DBSession
 from ..model.token_model import Token, TokenData
 from ..model.access_session import AccessSessionRead
-from admin.data.admin import Admin
-from admin.data import admin_repo
+from admin.features.admin_management.data import Admin
+from admin.features.admin_management.service import admin as admin_service
 from ..utils import jwt_utils, password_utils, access_session_utils
 
 
@@ -131,7 +131,7 @@ def get_admin(session: DBSession, token: Annotated[str, Depends(oauth2_scheme)])
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Admin not found",
         )
-    admin = admin_repo.get_admin(session)
+    admin = admin_service.get_admin(session)
     if not admin:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Admin not found, err 1012"
@@ -174,7 +174,7 @@ def validate_user(session: Session, username: str, password: str, request: Reque
 
 def validate_admin(session: Session, username: str, password: str):
     # admin = session.get(Admin, username)
-    admin = admin_repo.get_admin_using_email(session, username)
+    admin = admin_service.get_admin_using_email(session, username)
     if not admin:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

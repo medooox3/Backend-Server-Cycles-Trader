@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from di import DBSession
+from dependencies import DBSession
 from users_management.data.account import Account, AccountCreate
 from users_management.data import user_repo
 

@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from datetime import timedelta, datetime
 from fastapi import HTTPException, status
 
-from di import get_settings
+from dependencies import get_settings
 from ..model.token_model import TokenData, Token
 
 # Contains secret key and algorithm

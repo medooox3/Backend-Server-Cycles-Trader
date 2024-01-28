@@ -4,7 +4,7 @@ from ..data import User, UserCreate, UserRead, UserUpdate, License, UserSearch
 from ..data import user_repo
 
 # from security.utils import password_utils
-from di import DBSession
+from dependencies import DBSession
 from .user_license import router as user_license_router
 from .user_cycles import router as user_cycles_router
 

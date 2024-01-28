@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status
-from di import DBSession
+from dependencies import DBSession
 from users_management.data import user_repo
 from users_management.data.license import License, LicenseUpdate, LicenseCreate
 

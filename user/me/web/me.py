@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, Response, Request
 from users_management.data import user_repo, UserRead, UserUpdate, LicenseRead
 from security.web import auth_api
 from security.utils import access_session_utils
-from di import DBSession
+from dependencies import DBSession
 
 
 router = APIRouter()

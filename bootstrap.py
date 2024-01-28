@@ -7,7 +7,7 @@ def load_dotenv():
 def init_db():
     # ! Must import all SqlModel tables before running this function
     from database import create_tables
-    from admin.data.admin import Admin
+    from admin.features.admin_management.data import Admin
     from users_management.data import User, License
     from user.cycles.data.cycle import Cycle
     from security.model.access_session import AccessSession

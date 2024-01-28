@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException, Query
-from di import DBSession
+from dependencies import DBSession
 from users_management.data import user_repo, UserRead, User
 from user.cycles.data.cycle import Cycle, CycleRead, CycleUpdate
 
