@@ -6,8 +6,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 
 
 from dependencies import DBSession
-from ..model.token_model import Token, TokenData
-from ..model.access_session import AccessSessionRead
+from ..model import Token, TokenData, AccessSessionRead
 from admin.features.admin_management.data import Admin
 from admin.features.admin_management.service import admin as admin_service
 from ..utils import jwt_utils, password_utils, access_session_utils

@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from users_management.data.user import User
+    from shared.models import User
 
 
 class AccessSession(SQLModel, table=True):

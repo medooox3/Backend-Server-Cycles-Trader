@@ -1,14 +1,31 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from admin.features.users_management.web import users_management_router
 from admin import admin_router
+from security.web import token_router
+from admin.features.users_management.web import users_management_router
+from user.features.trading.web import trading_router
+from user.features.profile.web import profile_router
+from user.features.event import events_router
+
 from security.service import auth_service
-from user.features.trading.web import trading as user_trading_api
-from user.features.profile.web import profile as user_profile
 
 
 app = FastAPI()
+
+# ----------------- Admin -----------------
+app.include_router(
+    admin_router,
+    prefix="/admin",
+    tags=["Admin Profile Management"],
+    dependencies=[],
+)
+
+# ----------------- Token -----------------
+app.include_router(
+    token_router,
+    prefix="/token",
+)
 
 app.include_router(
     users_management_router,
@@ -18,23 +35,31 @@ app.include_router(
         Depends(auth_service.get_admin),
     ],
 )
-app.include_router(
-    admin_router,
-    prefix="/admin",
-    tags=["Admin Profile Management"],
-    dependencies=[],
-)
-app.include_router(auth_service.router, prefix="/token")
 
+
+# ----------------- Trading -----------------
 app.include_router(
-    user_trading_api.router,
+    trading_router,
     prefix="/cycles",
     tags=["User Trading Management"],
 )
 
-app.include_router(user_profile.router, prefix="/me", tags=["User Profile"])
 
+# ----------------- User Profile -----------------
+app.include_router(
+    profile_router,
+    prefix="/me",
+    tags=["User Profile"],
+)
 
+# ----------------- User Events -----------------
+app.include_router(
+    events_router,
+    prefix="/events",
+    tags=["User Events"],
+)
+
+# ----------------- Middleware -----------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
