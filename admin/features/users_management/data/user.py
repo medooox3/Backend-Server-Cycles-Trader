@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 if TYPE_CHECKING:
-    from user.cycles.data.cycle import Cycle
+    from shared.models import Cycle
     from security.model.access_session import AccessSession
     from users_management.data.account import Account
     from .license import License

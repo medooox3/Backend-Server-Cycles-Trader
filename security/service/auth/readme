@@ -1,0 +1,10 @@
+1. decode the token
+2. if is_admin 
+    - validate admin
+3. if not is_admin (it is a user)
+    - validate user
+    - validate the session and the client (user-agent)
+4. if not either
+    - raise error not valid credentials
+
+Validate Admin   

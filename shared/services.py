@@ -4,7 +4,7 @@ from admin.features.users_management.service import (
     license_service,
 )
 from security.service import (
-    auth_service,
+    admin_auth_service,
     jwt_service,
     access_session_service,
     password_service,

@@ -5,7 +5,7 @@ import secrets
 
 
 class Settings(BaseModel):
-    # Secrets
+    # --------- Secrets ---------
     secret_key: str = Field(
         default="477fd452c1709ff2e15d42bc4cf04156f662103f7859c9fd4647e1c3f70cb020"
     )
@@ -13,7 +13,10 @@ class Settings(BaseModel):
     access_token_expire_minutes: int = 60 * 24 * 3  # 3 days
     refresh_token_expire_minutes: int = 60 * 24 * 15  # 15 days
     local_token_expire_minutes: int = 60 * 24 * 30 * 12 + 5  # 365 days
-    # DB
+    # --------- Access session ---------
+    # The time after which the user is considered offline =
+    session_threshold: int = 5  # 5 minutes
+    # --------- DB ---------
     db_path: str = "sqlite:///db.sqlite"
     db_echo: bool = False
 

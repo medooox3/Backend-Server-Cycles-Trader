@@ -5,6 +5,11 @@ from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import computed_field
 
+from dependencies import get_settings
+
+
+config = get_settings()
+
 
 if TYPE_CHECKING:
     from shared.models import User
@@ -24,7 +29,7 @@ class AccessSession(SQLModel, table=True):
     # Todo: May be add the ip of the client (for more security)
     # ip: str
     user_id: int = Field(foreign_key="user.id")
-    user: Optional["User"] = Relationship(back_populates="access_sessions")
+    user: "User" = Relationship(back_populates="access_sessions")
 
 
 class AccessSessionRead(SQLModel):
@@ -38,7 +43,9 @@ class AccessSessionRead(SQLModel):
     @computed_field
     @property
     def is_online(self) -> bool:
-        return self.last_seen > datetime.utcnow() - timedelta(minutes=5)
+        return self.last_seen > datetime.utcnow() - timedelta(
+            minutes=config.session_threshold
+        )
 
 
 # class AccessSessionSearch(SQLModel):

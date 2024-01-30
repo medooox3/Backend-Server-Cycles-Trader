@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 class AccountBase(SQLModel):
     name: Optional[str] = Field(index=True)
-    uuid: str = Field(default_factory=lambda: uuid4().hex, index=True)
     metatrader_id: str = Field(..., unique=True, index=True)
 
 
 class Account(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    uuid: str = Field(default_factory=lambda: uuid4().hex, index=True)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
     # ********** Relationships *************
@@ -28,9 +28,11 @@ class Account(SQLModel, table=True):
 class AccountRead(AccountBase):
     # user_id: int
     # user: "UserRead"
+    uuid: str
     license: "LicenseRead"
     cycles: list["CycleRead"]
 
 
 class AccountCreate(AccountBase):
-    user_id: int
+    # user_id: int
+    pass
