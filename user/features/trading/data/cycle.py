@@ -19,7 +19,7 @@ class Cycle(CycleBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     uuid: str = Field(default_factory=lambda: shortuuid.uuid(), index=True)
     
-    account_id: Optional[int] = Field(default=None, foreign_key="account.id")
+    account_uuid: Optional[str] = Field(default=None, foreign_key="account.uuid")
     account: Optional["Account"] = Relationship(back_populates="cycles")
 
 
