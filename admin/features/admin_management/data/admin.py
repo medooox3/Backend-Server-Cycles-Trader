@@ -1,10 +1,10 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, AutoString
 from pydantic import EmailStr
 from typing import Optional
 
 
 class AdminBase(SQLModel):
-    email: EmailStr = Field(unique=True)
+    email: EmailStr = Field(unique=True, sa_type=AutoString)
     profile_name: Optional[str] = Field(default="admin")
 
 
