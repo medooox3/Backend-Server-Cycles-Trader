@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from user.cycles.data.cycle import Cycle, CycleRead
+from shared.models import Cycle, CycleRead
 
 
 def get_user_cycles(session: Session, user_id: int) -> list[CycleRead]:
