@@ -13,7 +13,8 @@ const HANDLERS = {
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null
+  user: null,
+  isAdmin: false
 };
 
 const handlers = {
@@ -213,7 +214,7 @@ export const AuthProvider = (props) => {
   const signUp = async (email, name, password) => {
     try {
       await axios.put( `${apiUrl}/users`, {
-        "name": name,
+        "profile_name": name,
         "password": password
       });
     } catch (error) {

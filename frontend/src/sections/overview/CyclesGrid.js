@@ -191,19 +191,27 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   WebkitFontSmoothing: 'auto',
   letterSpacing: 'normal',
   '& .MuiDataGrid-columnsContainer': {
-    backgroundColor: theme.palette.mode === 'light' ? '#fafafa' : '#1d1d1d',
+    backgroundColor: theme.palette.mode === 'light' ? '#d3d3d3' : '#1d1d1d',
   },
   '& .MuiDataGrid-iconSeparator': {
     display: 'none',
   },
-  '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+  '& .MuiDataGrid-columnHeader ': {
     borderRight: `1px solid ${
-      theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'
+      theme.palette.mode === 'light' ? '#fafafa' : '#303030'
     }`,
+    
+  }, '.MuiDataGrid-cell': {
+    borderRight: `1px solid ${
+      theme.palette.mode === 'light' ? '#d3d3d3' : '#303030'
+    }`,
+  },
+  '& .MuiDataGrid-columnHeader': {
+    backgroundColor: theme.palette.mode === 'light' ? '#d3d3d3' : '#1d1d1d'
   },
   '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
     borderBottom: `1px solid ${
-      theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'
+      theme.palette.mode === 'light' ? '#d3d3d3' : '#303030'
     }`,
   },
   '& .MuiDataGrid-cell': {
@@ -242,17 +250,19 @@ export default function Cycles() {
   const [rows, setRows] = React.useState(initialRows);
 
   const columns = [
-    { field: 'id', headerName: 'Cycle',type:'number', width: 70, editable: false,headerAlign: 'left',align: 'left' },
-    { field: 'symbol', headerName: 'Symbol', width: 120, editable: false ,headerAlign: 'left',align: 'left'},
-    { field: 'tp', headerName: 'TP', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'sl', headerName: 'SL', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'tf', headerName: 'TF', width: 70, editable: true , type: 'singleSelect', valueOptions: ['M1', 'M5', 'M15','M30','H1','H4','D1','W1','MN'],headerAlign: 'left',align: 'left'},
-    { field: 'lot', headerName: 'Lot', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'count', headerName: 'Count', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'candle', headerName: 'Candle', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'auto', headerName: 'Auto',width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'open', headerName: 'Open', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'close', headerName: 'Close',width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
+    { field: 'id', headerName: 'Cycle',type:'number', width: 70, editable: false,headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'symbol', headerName: 'Symbol', width: 120, editable: false ,headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'tp', headerName: 'TP', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'sl', headerName: 'SL', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'tf', headerName: 'TF', width: 70, editable: true , type: 'singleSelect', valueOptions: ['M1', 'M5', 'M15','M30','H1','H4','D1','W1','MN'],headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'lot', headerName: 'Lot', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'count', headerName: 'Count', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'candle', headerName: 'Candle', width: 70, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'auto', headerName: 'Auto',width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'open', headerName: 'Open', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'close', headerName: 'Close',width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left', flex: 1 },
+    { field: 'Start Again', headerName: 'Start Again',width: 120, editable: true ,type:'boolean',headerAlign: 'left',align: 'center', flex: 1 },
+    { field: 'lasthedge', headerName: 'last hedge',width: 120, editable: true ,type:'dateTime',headerAlign: 'left',align: 'left', flex: 1 },
 
   ];
   const [paginationModel, setPaginationModel] = React.useState({
@@ -264,6 +274,7 @@ export default function Cycles() {
     <div style={{ height: 400, width: '100%' }}>
       <StyledDataGrid
         autoHeight
+        
         columns={columns}
         rows={rows}
         checkboxSelection

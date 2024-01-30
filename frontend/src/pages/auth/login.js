@@ -63,7 +63,17 @@ const Page = () => {
   );
 
  
-
+const handleSkip = useCallback(
+    async () => {
+      try {
+        await auth.skip();
+        router.push('/');
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    []
+  );
   return (
     <>
       <Head>
@@ -172,7 +182,14 @@ const Page = () => {
                   Continue
                 </Button>
          
-               
+                <Button
+                  fullWidth
+                  size="large"
+                  sx={{ mt: 3 }}
+                  onClick={handleSkip}
+                >
+                  Skip authentication
+                </Button>
               </form>
             )}
             {/* {method === 'phoneNumber' && (
