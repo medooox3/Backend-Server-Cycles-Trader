@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../../hooks/use-auth';
 import { Layout as AuthLayout } from '../../../layouts/auth/layout';
-
+ 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
@@ -58,13 +58,7 @@ const Page = () => {
     []
   );
 
-  const handleSkip = useCallback(
-    () => {
-      auth.skip();
-      router.push('/');
-    },
-    [auth, router]
-  );
+ 
 
   return (
     <>

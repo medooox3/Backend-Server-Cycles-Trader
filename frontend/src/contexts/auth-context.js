@@ -139,8 +139,8 @@ export const AuthProvider = (props) => {
     });
     
   };
-  const signInAdmin = async (email, password) => {
-    try {
+  const signIn = async (email, password) => {
+    
       const response = await axios.post(`${apiUrl}/token`, querystring.stringify({
         username: email,
         password: password
@@ -149,32 +149,29 @@ export const AuthProvider = (props) => {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
+      if (response.status !== 200) {
+        throw new Error('Please check your email and password');
+      }
   
-      if (response.status === 200) {
-        // Login successful
+      try {
+        window.sessionStorage.setItem('authenticated', 'true');
         const token = response.data.access_token;
         // Store the token in local storage or in memory
         localStorage.setItem('token', token);
-        window.sessionStorage.setItem('authenticated', 'true');
-        console.log('Login successful');
-        console.log(response.data);
-      } else {
-        // Handle login failure
-        console.error('Login failed');
+        window.sessionStorage.setItem('token', JSON.stringify(token));
+      } catch (err) {
+        console.error(err);
+        console.log('error');
       }
-    } catch (error) {
-      // Handle request errors
-      console.error(error);
-    }
+
     const token = localStorage.getItem('token');
-    console.log(token); // log the token to the console
-    
     const admin = await axios.get(`${apiUrl}/admin`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-    console.log(admin);
+
+
    const user = {
      id: '5e86809283e28b96d2d38537',
      avatar: '/assets/avatars/avatar-anika-visser.png',
@@ -184,38 +181,11 @@ export const AuthProvider = (props) => {
 
    dispatch({
      type: HANDLERS.SIGN_IN_ADMIN,
-     payload: admin
+     payload: user
    });
  };
 
-  const signIn = async (email, password) => {
-     const response = await axios.get(`${apiUrl}/admin`, {
-      "email": email,
-      "password": password
-    });
-    if (response.status !== 200) {
-      throw new Error('Please check your email and password');
-    }
-
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-      console.log('error');
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name:   response.data.name,
-      email:  response.data.email
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
+  
 
   const signUpAdmin = async (email, name, password) => {
     try {
@@ -278,7 +248,7 @@ export const AuthProvider = (props) => {
         signIn,
         signUp,
         signOut,
-        signInAdmin,
+        
         signUpAdmin
       }}
     >

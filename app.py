@@ -8,8 +8,6 @@ from user.cycles.web import cycles as cycles_api
 from user.me.web import me as me_api
 
 
-
-
 app = FastAPI()
 
 app.include_router(
