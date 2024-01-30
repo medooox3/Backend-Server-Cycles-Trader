@@ -8,11 +8,15 @@ from ..data import (
 )
 from ..data.exceptions import AccountNotFoundException, LicenseNotValidException
 
-from . import license_service
-
+from . import license_service, users_service
+from ..data.exceptions import UserNotFoundException
 
 def create_account(session: Session, user_id: int, account: AccountCreate) -> Account:
-    # a = Account.model_validate(account)
+    # todo: validate that the user exists,
+    # can't add an account to non existing user (the user id must be wrong)
+    user = users_service.get_user(session, user_id)
+    if not user:
+        raise UserNotFoundException
     a = Account(**account.model_dump(), user_id=user_id)
     session.add(a)
     session.commit()
