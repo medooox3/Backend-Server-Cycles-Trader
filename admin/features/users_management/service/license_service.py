@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlmodel import Session, select
 from ..data import (
     User,
@@ -11,6 +12,7 @@ from ..data.exceptions import (
     AccountNotFoundException,
     LicenseNotFoundException,
     LicenseAlreadyExists,
+    LicenseNotValidException,
 )
 
 
@@ -18,8 +20,8 @@ def get_all_licenses(session: Session):
     return session.exec(select(License)).all()
 
 
-def get_account_license(session: Session, account_id: int) -> License:
-    account = session.get(Account, account_id)
+def get_account_license(session: Session, account_uuid: str) -> License:
+    account = session.exec(select(Account).where(Account.uuid == account_uuid)).first()
     if not account:
         raise AccountNotFoundException
     license = account.license
@@ -48,6 +50,8 @@ def validate_license(license: License) -> bool:
     if is_expired:
         license.valid = False
     return license.valid
+
+
 
 
 def get_user_of_license(session: Session, license_id: int) -> User:
@@ -90,16 +94,16 @@ def create_account_license(
     return db_license
 
 
-def delete_license(session: Session, account_id: int):
-    license = get_account_license(session, account_id)
+def delete_license(session: Session, account_uuid: str):
+    license = get_account_license(session, account_uuid)
     session.delete(license)
     session.commit()
 
 
-def update_license(session: Session, account_id: int, license: LicenseUpdate):
+def update_license(session: Session, account_uuid: str, license: LicenseUpdate):
     from datetime import datetime
 
-    db_license = get_account_license(session, account_id)
+    db_license = get_account_license(session, account_uuid)
 
     # update license attributes
     for field, value in license.model_dump(exclude_unset=True).items():

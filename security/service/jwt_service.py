@@ -9,12 +9,12 @@
 
 
 from jose import jwt, JWTError
-from pydantic import BaseModel
 from datetime import timedelta, datetime
 from fastapi import HTTPException, status
 
 from dependencies import get_settings
-from ..model.token_model import TokenData, Token
+from ..model.token_model import TokenData
+from ..model.exceptions import TokenCredentialsException
 
 # Contains secret key and algorithm
 config = get_settings()
@@ -35,25 +35,19 @@ def create_access_token(token_data: TokenData, expires_delta: timedelta | None =
 
 
 def verify_token_access(token: str):
-    CredentialsException = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Couldn't verify credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(token, config.secret_key, algorithms=[config.algorithm])
+
         sub = payload.get("sub")
         access_session = payload.get("session")
-        is_admin = payload.get("admin")
-        # if (sub is None) or (is_admin is None) or (access_session is None):
-        if not (sub and access_session is not None and is_admin is not None):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Couldn't verify credentials, sub={sub}, is_admin={is_admin}",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        token_data = TokenData(sub=sub, session=access_session, admin=is_admin)
+
+        if sub is None:
+            raise TokenCredentialsException
+
+        token_data = TokenData(sub=sub, session=access_session)
+
         return token_data
+
     except JWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

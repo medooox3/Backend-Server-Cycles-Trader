@@ -4,6 +4,7 @@
 3. if not is_admin (it is a user)
     - validate user
     - validate the session and the client (user-agent)
+    - protected endpoints (for trading) needs license checking
 4. if not either
     - raise error not valid credentials
 

@@ -3,7 +3,7 @@ from typing import Annotated
 
 
 from dependencies import DBSession
-from security.web.token import get_active_user
+from security.dependencies import get_user 
 from shared.models import UserRead, CycleRead, CycleCreate, CycleUpdate, Order
 from ..service import trading_service
 
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 # UserDependency = Annotated[UserRead, Depends(get_user)]
-UserDependency = Annotated[UserRead, Depends(get_active_user)]
+UserDependency = Annotated[UserRead, Depends(get_user)]
 
 # ! Todo: when the user cycles change send new data to all connected clients
 # Todo: research SSE to send notification of change to all connected clients

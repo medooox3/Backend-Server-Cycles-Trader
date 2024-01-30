@@ -8,7 +8,7 @@ from user.features.trading.web import trading_router
 from user.features.profile.web import profile_router
 from user.features.event import events_router
 
-from security.service import admin_auth_service
+from security.dependencies import get_admin
 
 
 app = FastAPI()
@@ -32,7 +32,7 @@ app.include_router(
     prefix="/users",
     tags=["Admin Users Management"],
     dependencies=[
-        Depends(admin_auth_service.get_admin),
+        Depends(get_admin),
     ],
 )
 

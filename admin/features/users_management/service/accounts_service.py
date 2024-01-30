@@ -8,7 +8,10 @@ from ..data import (
 )
 from ..data.exceptions import (
     AccountNotFoundException,
+    LicenseNotValidException
 )
+
+from . import license_service
 
 
 def create_account(session: Session, user_id: int, account: AccountCreate) -> Account:
@@ -49,3 +52,11 @@ def delete_accounts(
 
 def update_account():
     pass
+
+def validate_account_license(session: Session, account_uuid: str):
+    license = license_service.get_account_license(session, account_uuid)
+    valid = license_service.validate_license(license)
+    if not valid:
+        raise LicenseNotValidException
+    account = get_account_from_uuid(session, account_uuid)
+    return account

@@ -21,5 +21,26 @@ AccessSessionNotFound = HTTPException(
 
 # ************** Authentication *************
 
+UserNotFoundException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="User not found.",
+)
+
+WrongCredentialsException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Wrong Credentials",
+)
 
 # ************** Authorization *************
+UnAuthorizedAccessException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Un Authroized Access. Please Login.",
+)
+
+
+# ************** Token *************
+TokenCredentialsException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Couldn't verify Token credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)

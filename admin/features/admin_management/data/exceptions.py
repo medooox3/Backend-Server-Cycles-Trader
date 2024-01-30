@@ -1,6 +1,5 @@
-from .admin import Admin
 from fastapi import HTTPException, status
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
+
 
 AdminNotFountException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND, detail="Admin not found."

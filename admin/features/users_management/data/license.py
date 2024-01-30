@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class LicenseBase(SQLModel):
-    start_date: datetime = Field(default_factory=datetime.utcnow)
     expire_date: datetime = Field(default_factory=datetime.utcnow)
+    start_date: datetime = Field(default_factory=datetime.utcnow)
     valid: bool = Field(default=False, nullable=False)
 
 

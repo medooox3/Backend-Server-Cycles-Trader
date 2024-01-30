@@ -2,7 +2,7 @@ from typing import Optional
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
 
-from security.utils import password_utils
+from security.service import password_service
 from ..data import (
     UserCreate,
     User,
@@ -24,7 +24,7 @@ def _map_user(user: UserCreate) -> User:
         email=user.email,
         location=user.location,
         phone=user.phone,
-        password_hash=password_utils.get_password_hash(user.password),
+        password_hash=password_service.get_password_hash(user.password),
     )
 
 
@@ -115,7 +115,7 @@ def update_user(session: Session, id: int, user: UserUpdate):
     for field, value in user.model_dump(exclude_unset=True).items():
         if field == "password":
             field = "password_hash"
-            value = password_utils.get_password_hash(value)
+            value = password_service.get_password_hash(value)
         setattr(db_user, field, value)
 
     session.add(db_user)
@@ -130,7 +130,7 @@ def change_password(session: Session, user_id: int, new_password: str):
     if not db_user:
         raise UserNotFoundException
 
-    db_user.password_hash = password_utils.get_password_hash(new_password)
+    db_user.password_hash = password_service.get_password_hash(new_password)
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
