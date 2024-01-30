@@ -24,10 +24,10 @@ class License(LicenseBase, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default=None)
     
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    # user_id: Optional[int] = Field(default=None, foreign_key="user.id")
     account_id: Optional[int] = Field(default=None, foreign_key="account.id")
 
-    user: Optional["User"] = Relationship(back_populates="licenses")
+    # user: Optional["User"] = Relationship(back_populates="licenses")
     account: Optional["Account"] = Relationship(back_populates="license")
 
 

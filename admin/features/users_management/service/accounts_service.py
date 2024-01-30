@@ -6,27 +6,26 @@ from ..data import (
     AccountRead,
     AccountCreate,
 )
-from ..data.exceptions import (
-    AccountNotFoundException,
-    LicenseNotValidException
-)
+from ..data.exceptions import AccountNotFoundException, LicenseNotValidException
 
 from . import license_service
 
 
 def create_account(session: Session, user_id: int, account: AccountCreate) -> Account:
-    a = Account.model_validate(account)
+    # a = Account.model_validate(account)
+    a = Account(**account.model_dump(), user_id=user_id)
     session.add(a)
     session.commit()
     session.refresh(a)
     return a
 
 
-def get_account_from_uuid(session: Session, uuid: str) -> AccountRead:
+def get_account_from_uuid(session: Session, uuid: str) :
     account = session.exec(select(Account).where(Account.uuid == uuid)).first()
     if not account:
         raise AccountNotFoundException
-    return AccountRead.model_validate(account)
+    return account
+    # return AccountRead.model_validate(account)
 
 
 def get_all_accounts(session: Session, user_id: Optional[int]) -> list[Account]:
@@ -52,6 +51,7 @@ def delete_accounts(
 
 def update_account():
     pass
+
 
 def validate_account_license(session: Session, account_uuid: str):
     license = license_service.get_account_license(session, account_uuid)

@@ -14,7 +14,7 @@ class AccountBase(SQLModel):
     metatrader_id: str = Field(..., unique=True, index=True)
 
 
-class Account(SQLModel, table=True):
+class Account(AccountBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     uuid: str = Field(default_factory=lambda: uuid4().hex, index=True)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
@@ -29,7 +29,7 @@ class AccountRead(AccountBase):
     # user_id: int
     # user: "UserRead"
     uuid: str
-    license: "LicenseRead"
+    license: "License"
     cycles: list["CycleRead"]
 
 

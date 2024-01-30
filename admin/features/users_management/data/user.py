@@ -29,7 +29,7 @@ class User(UserBase, table=True):
     
 
     # ********* Relationships *********
-    licenses: Optional[list["License"]] = Relationship(back_populates="user")
+    # licenses: Optional[list["License"]] = Relationship(back_populates="user")
     accounts: Optional[list["Account"]] = Relationship(back_populates="user")
     access_sessions: list["AccessSession"] = Relationship(back_populates="user")
 

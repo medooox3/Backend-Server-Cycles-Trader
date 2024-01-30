@@ -14,7 +14,7 @@ from ..data.exceptions import (
     LicenseAlreadyExists,
     LicenseNotValidException,
 )
-
+from . import accounts_service
 
 def get_all_licenses(session: Session):
     return session.exec(select(License)).all()
@@ -65,27 +65,24 @@ def get_user_of_license(session: Session, license_id: int) -> User:
 
 
 def create_account_license(
-    session: Session, account_id: int, license: LicenseCreate
+    session: Session, account_uuid: str, license: LicenseCreate
 ) -> License:
     # find account
-    account = session.get(Account, account_id)
-    if not account:
-        raise AccountNotFoundException
+    account = accounts_service.get_account_from_uuid(session, account_uuid)
 
     if account.license:
         raise LicenseAlreadyExists
+    
     # add license to the db
     db_license = License(
         **license.model_dump(exclude_unset=True),
         account_id=account.id,
-        user_id=account.user_id,
+        # user_id=account.user_id,
     )
     session.add(db_license)
     session.commit()
     session.refresh(db_license)
 
-    # link the license to the user
-    db_license.user = account.user
     # link license to account
     account.license = db_license
 

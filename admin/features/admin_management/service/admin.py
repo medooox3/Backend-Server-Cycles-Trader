@@ -34,7 +34,7 @@ def find_admin_by_email(session: Session, email:str):
     return session.exec(select(Admin).where(Admin.email == email.lower())).first()
 
 def create_admin(session: Session, admin: AdminCreate):
-    if get_admin(session):
+    if session.exec(select(Admin)).first():
         raise AdminAlreadyExistsException
     db_admin = Admin(
         email=admin.email.lower(),
