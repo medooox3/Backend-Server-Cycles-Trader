@@ -107,11 +107,6 @@ const Page = () => {
                 label="Orders"
                 value="orders"
               />
-             
-              <Tab
-                label="Wallets"
-                value="wallets"
-              />
             </Tabs>
           </Grid>
           <Grid

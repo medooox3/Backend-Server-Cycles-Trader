@@ -5,7 +5,8 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-export default function AddressForm() {
+export default function AddressForm({Name, setName, profileName, setProfileName, Email, setEmail, Phone, setPhone, Address, setAddress, City, setCity, State1, setState1, Zip, setZip, Country, setCountry}) {
+  
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -15,34 +16,51 @@ export default function AddressForm() {
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="firstName"
-            name="firstName"
-            label="First name"
+            id="userName"
+            name="userName"
+            label="User Name"
             fullWidth
             autoComplete="given-name"
             variant="standard"
+            value={Name}
+            onChange={(e) => setName(e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="lastName"
-            name="lastName"
-            label="Last name"
+            id="FullName"
+            name="FullName"
+            label="Full Name"
             fullWidth
-            autoComplete="family-name"
-            variant="standard"
+            autoComplete="family-name"  
+            variant="standard"  
+            value={profileName}
+            onChange={(e) => setProfileName(e.target.value)}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <TextField
             required
-            id="address1"
-            name="address1"
-            label="Address line 1"
-            fullWidth
-            autoComplete="shipping address-line1"
+           id="email"
+            name="email"
+            label="Email"
+            autoComplete="email"
             variant="standard"
+            value={Email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12}sm={6} >
+          <TextField
+            required
+            id="phone"
+            name="phone"
+            label="Phone"
+            autoComplete="phone"
+            variant="standard"
+            value={Phone}
+            onChange={(e) => setPhone(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -53,6 +71,8 @@ export default function AddressForm() {
             fullWidth
             autoComplete="shipping address-line2"
             variant="standard"
+            value={Address}
+            onChange={(e) => setAddress(e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -64,6 +84,8 @@ export default function AddressForm() {
             fullWidth
             autoComplete="shipping address-level2"
             variant="standard"
+            value={City}
+            onChange={(e) => setCity(e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -73,6 +95,8 @@ export default function AddressForm() {
             label="State/Province/Region"
             fullWidth
             variant="standard"
+            value={State1}
+            onChange={(e) => setState1(e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -84,6 +108,8 @@ export default function AddressForm() {
             fullWidth
             autoComplete="shipping postal-code"
             variant="standard"
+            value={Zip}
+            onChange={(e) => setZip(e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -95,6 +121,8 @@ export default function AddressForm() {
             fullWidth
             autoComplete="shipping country"
             variant="standard"
+            value={Country}
+            onChange={(e) => setCountry(e.target.value)}
           />
         </Grid>
         {/* <Grid item xs={12}>

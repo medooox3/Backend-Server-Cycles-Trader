@@ -99,8 +99,7 @@ export const CustomersTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-
+              
                 return (
                   <Fragment  key={customer.id} >
                   <TableRow
@@ -148,16 +147,16 @@ export const CustomersTable = (props) => {
                       {customer.email}
                     </TableCell>
                     <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
+                      {customer.location}
                     </TableCell>
                     <TableCell>
                       {customer.phone}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      
                     </TableCell>
                     <TableCell>
-                      {customer.accounts}
+                      
                     </TableCell>
                     <TableCell>
                       {editIcon}

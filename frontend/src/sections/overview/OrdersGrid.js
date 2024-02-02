@@ -31,7 +31,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 3, 
@@ -49,7 +49,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 5, 
@@ -58,7 +58,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 6, 
@@ -67,7 +67,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 7, 
@@ -76,7 +76,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 8, 
@@ -85,7 +85,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   {
     id: 9, 
@@ -94,7 +94,7 @@ const initialRows = [
     lot:0.01,
     openPrice:1.09203,
     tp:100,
-    sl:100,
+    sl:100
   },
   
     {
@@ -104,7 +104,7 @@ const initialRows = [
       lot:0.01,
       openPrice:1.09203,
       tp:100,
-      sl:100,
+      sl:100
   
     },
     {
@@ -115,7 +115,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 12, 
@@ -125,7 +125,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 13, 
@@ -135,7 +135,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 14, 
@@ -145,7 +145,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 15, 
@@ -155,7 +155,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 16, 
@@ -165,7 +165,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 17, 
@@ -175,7 +175,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
     {
       id: 18, 
@@ -185,7 +185,7 @@ const initialRows = [
       openPrice:1.09203,
       
       tp:100,
-      sl:100,
+      sl:100
     },
   
     {
@@ -195,7 +195,7 @@ const initialRows = [
       lot:0.01,
       openPrice:1.09203,
       tp:100,
-      sl:100,
+      sl:100
     }
 ] ;
 
@@ -275,15 +275,25 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
   '& .MuiDataGrid-iconSeparator': {
     display: 'none',
-  },
-  '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+  }, '& .MuiDataGrid-columnHeader ': {
     borderRight: `1px solid ${
-      theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'
+      theme.palette.mode === 'light' ? '#fafafa' : '#303030'
     }`,
+    
+  },
+ 
+   '.MuiDataGrid-cell': {
+    borderRight: `1px solid ${
+      theme.palette.mode === 'light' ? '#d3d3d3' : '#303030'
+    }`,
+  },
+  
+  '& .MuiDataGrid-columnHeader': {
+    backgroundColor:  theme.palette.mode === 'light' ? '#d3d3d3' : '#1d1d1d',
   },
   '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
     borderBottom: `1px solid ${
-      theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'
+      theme.palette.mode === 'light' ? '#d3d3d3' : '#303030'
     }`,
   },
   '& .MuiDataGrid-cell': {
@@ -315,22 +325,25 @@ function CustomPagination() {
     />
   );
 }
-
+const tableHeaderStyle = {
+  fontSize: '1.2rem',
+  fontWeight: 'bold',
+  color: '#fff',
+  backgroundColor: '#000',
+};
 const PAGE_SIZE = 10;
 
 export default function Orders() {
   const [rows, setRows] = React.useState(initialRows);
 
   const columns = [
-    { field: 'id', headerName: 'Cycle',type:'number', width: 70, editable: false,headerAlign: 'left',align: 'left' },
-    { field: 'ticket', headerName: 'Ticket',type:'number', width: 120, editable: false,headerAlign: 'left',align: 'left' },
-    { field: 'symbol', headerName: 'Symbol', width: 120, editable: false ,headerAlign: 'left',align: 'left'},
-    { field: 'lot', headerName: 'Lot', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'openPrice', headerName: 'Open Price', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'tp', headerName: 'TP', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-    { field: 'sl', headerName: 'SL', width: 120, editable: true ,type:'number',headerAlign: 'left',align: 'left'},
-
-
+    { field: 'id', headerName: 'Cycle',type:'number', editable: false,headerAlign: 'left',align: 'left' ,flex:1},
+    { field: 'ticket', headerName: 'Ticket',type:'number',   editable: false,headerAlign: 'left',align: 'left' ,flex:1},
+    { field: 'symbol', headerName: 'Symbol',   editable: false ,headerAlign: 'left',align: 'left',flex:1},
+    { field: 'lot', headerName: 'Lot',   editable: true ,type:'number',headerAlign: 'left',align: 'left',flex:1},
+    { field: 'openPrice', headerName: 'Open Price',   editable: true ,type:'number',headerAlign: 'left',align: 'left',flex:1},
+    { field: 'tp', headerName: 'TP',   editable: true ,type:'number',headerAlign: 'left',align: 'left',flex:1},
+    { field: 'sl', headerName: 'SL',   editable: true ,type:'number',headerAlign: 'left',align: 'left',flex:1}
   ];
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: PAGE_SIZE,
@@ -341,12 +354,14 @@ export default function Orders() {
     <div style={{ height: 400, width: '100%' }}>
       <StyledDataGrid
         autoHeight
+        autoWidth
         columns={columns}
         rows={rows}
         checkboxSelection
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[PAGE_SIZE]}
+        tableHeaderStyle={tableHeaderStyle}
         slots={{
           pagination: CustomPagination,
         }}

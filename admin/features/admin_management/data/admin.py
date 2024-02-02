@@ -25,3 +25,4 @@ class AdminUpdate(SQLModel):
     email: Optional[str] = None
     password: Optional[str] = None
     profile_name: Optional[str] = None
+    
