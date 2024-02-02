@@ -27,8 +27,8 @@ const Page = () => {
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@patrick.io',
-      password: 'Password123!',
+      email: '',
+      password: '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -44,7 +44,7 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await axios.get('/admin', { values }  )
+      
         await auth.signIn(values.email, values.password);
         router.push('/');
       } catch (err) {
@@ -62,14 +62,18 @@ const Page = () => {
     []
   );
 
-  const handleSkip = useCallback(
-    () => {
-      auth.skip();
-      router.push('/');
+ 
+const handleSkip = useCallback(
+    async () => {
+      try {
+        await auth.skip();
+        router.push('/');
+      } catch (err) {
+        console.error(err);
+      }
     },
-    [auth, router]
+    []
   );
-
   return (
     <>
       <Head>
@@ -158,9 +162,7 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                <FormHelperText sx={{ mt: 1 }}>
-                  Optionally you can skip.
-                </FormHelperText>
+               
                 {formik.errors.submit && (
                   <Typography
                     color="error"
@@ -179,6 +181,7 @@ const Page = () => {
                 >
                   Continue
                 </Button>
+         
                 <Button
                   fullWidth
                   size="large"
@@ -187,15 +190,6 @@ const Page = () => {
                 >
                   Skip authentication
                 </Button>
-                <Alert
-                  color="primary"
-                  severity="info"
-                  sx={{ mt: 3 }}
-                >
-                  <div>
-                    You can use <b>demo@patrick.io</b> and password <b>Password123!</b>
-                  </div>
-                </Alert>
               </form>
             )}
             {/* {method === 'phoneNumber' && (

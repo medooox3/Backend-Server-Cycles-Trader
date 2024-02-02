@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import AddressForm from '../sections/NewClient/LicesnceForm';
 import PaymentForm from '../sections/NewClient/PaymentForm';
 import Review from '../sections/NewClient/Review';
+import axios from 'axios';
 
 function Copyright() {
   return (
@@ -28,25 +29,86 @@ function Copyright() {
   );
 }
 
-const steps = ['Client Information', 'Licesne', 'Review '];
+const steps = ['Client Information', 'Licesne'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AddressForm />;
-    case 1:
-      return <PaymentForm />;
-    case 2:
-      return <Review />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
+
 
 export default function AddClient() {
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const [Name, setName] = React.useState('');
+  const [profileName, setProfileName] = React.useState('');
+  const [Email, setEmail] = React.useState('');
+  const [Phone, setPhone] = React.useState('');
+  const [Address, setAddress] = React.useState('');
+  const [City, setCity] = React.useState('');
+  const [State1, setState1] = React.useState('');
+  const [Zip, setZip] = React.useState('');
+  const [Country, setCountry] = React.useState('');
+  const [LicenseStart, setLicenseStart] = React.useState('');
+  const [LicenseExp, setLicenseExp] = React.useState('');
+  const[AccountId, setAccountId] = React.useState('');
+  const[AccountName, setAccountName] = React.useState('');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const handleNext = () => {
+    if(activeStep===0){
+      if(Name==='' || profileName==='' || Email==='' || Phone==='' || Address==='' || City==='' || State1==='' || Zip==='' || Country===''){
+        alert('Please fill all the fields');
+        return;
+      }
+    }
+    if(activeStep===1){
+      if(LicenseStart==='' ){
+        alert('Please fill License Start Date');
+        return;
+      }
+      if(LicenseExp==='' ){
+        alert('Please fill License Expiry Date');
+        return;
+      }
+      if(AccountId==='' ){
+        alert('Please fill Account ID');
+        return;
+      }
+      if(AccountName==='' ){
+        alert('Please fill Account Name');
+        return;
+      }
+      if(LicenseStart>LicenseExp){
+        alert('License Start Date should be less than License Expiry Date');
+        return;
+      }
+      const token = localStorage.getItem('token');
+      axios.post(`${apiUrl}/users`, {
+        name: Name,
+        profile_name: profileName,
+        email: Email,
+        phone: Phone,
+        location: Address+','+City+','+State1+','+Zip+','+Country,
+        password: "string"
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          name: Name,
+          profile_name: profileName,
+          email: Email,
+          phone: Phone,
+          location: Address+','+City+','+State1+','+Zip+','+Country,
+          password: "string"
+        }
+      }).then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          alert('Client Added Successfully');
+        }
+      }).catch((error) => {
+        console.log(error);
+        alert('Something went wrong');
+      });
+    }
+     
     setActiveStep(activeStep + 1);
   };
 
@@ -81,7 +143,12 @@ export default function AddClient() {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep)}
+              
+             {activeStep === 0 && (<AddressForm  setName={setName}   setAddress={setAddress} setCity={setCity}  setCountry={setCountry}  setState1={setState1} setEmail={setEmail}   
+             setPhone={setPhone}  setProfileName={setProfileName}  setZip={setZip} Name={Name} Address={Address} City={City} Country={Country} State1={State1}  Email={Email}  
+             Phone={Phone} profileName={profileName} Zip={Zip}  />)}
+              {activeStep === 1 && (<PaymentForm setAccountId={setAccountId} setLicenseExp={setLicenseExp}  setLicenseStart={setLicenseStart} setAccountName={setAccountName}  LicenseStart={LicenseStart} AccountId={AccountId}  LicenseExp={LicenseExp} AccountName={AccountName}/>)}
+             
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -94,7 +161,7 @@ export default function AddClient() {
                   onClick={handleNext}
                   sx={{ mt: 3, ml: 1 }}
                 >
-                  {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                  {activeStep === steps.length - 1 ? 'Add' : 'Next'}
                 </Button>
               </Box>
             </React.Fragment>

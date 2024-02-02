@@ -9,18 +9,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-function BasicDatePicker(props) {
-    const { text } = props;
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} >
-    
-        <DatePicker label={text} variant="standard" />
-    
-    </LocalizationProvider>
-  );
-}
 
-export default function LicesnceForm() {
+
+export default function LicesnceForm({ LicenseStart, setLicenseStart, LicenseExp, setLicenseExp, AccountId, setAccountId, AccountName, setAccountName }) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -34,44 +25,38 @@ export default function LicesnceForm() {
             id="AccountID"
             label="MetaTrader Account ID"
             fullWidth
-            autoComplete="cc-name"
-            
+            variant="standard"
+            value={AccountId}
+            onChange={(e) => setAccountId(e.target.value)}
+
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             required
-            id="Name"a
+            id="Name"
             label="Account Name"
             fullWidth
-            autoComplete="cc-number"
-            
+            variant="standard"
+            value={AccountName}
+            onChange={(e) => setAccountName(e.target.value)}
+
+
           />
         </Grid>
         <Grid item xs={12} md={6}>
-            <BasicDatePicker text="Start Date" />
-          {/* <TextField
-            required
-            id="expDate"
-            label="Expiry date"
-            fullWidth
-            autoComplete="cc-exp"
-            variant="standard"
-          /> */}
+          <LocalizationProvider dateAdapter={AdapterDayjs} >
+            <DatePicker label="Start Date" variant="standard" value={LicenseStart} onChange={(e) => setLicenseStart(e)} />
+          </LocalizationProvider>
+
         </Grid>
         <Grid item xs={12} md={6}>
-            <BasicDatePicker text="Expiry Date"/>
-          {/* <TextField
-            required
-            id="cvv"
-            label="CVV"
-            helperText="Last three digits on signature strip"
-            fullWidth
-            autoComplete="cc-csc"
-            variant="standard"
-          /> */}
+          <LocalizationProvider dateAdapter={AdapterDayjs} >
+            <DatePicker label="Expiry Date" variant="standard" value={LicenseExp} onChange={(e) => setLicenseExp(e)} />
+          </LocalizationProvider>
+         
         </Grid>
-       
+
       </Grid>
     </React.Fragment>
   );
